@@ -1,0 +1,16 @@
+### Get all products
+GET http://localhost:5000/api/products
+
+### Delete a product by ID (change 1 to an actual existing ID)
+DELETE http://localhost:5000/api/products/1
+
+### Create a new product
+POST http://localhost:5000/api/products
+Content-Type: application/json
+
+{
+  "title": "Test Product",
+  "description": "Just testing",
+  "price": 19.99,
+  "imageUrl": "https://example.com/image.jpg"
+}

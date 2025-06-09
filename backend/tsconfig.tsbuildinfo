@@ -1,0 +1,1 @@
+{"root":["./src/index.ts","./src/seed.ts","./src/config/prisma.ts","./src/controllers/productcontroller.ts","./src/routes/productroutes.ts"],"errors":true,"version":"5.8.3"}

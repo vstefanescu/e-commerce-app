@@ -41,3 +41,28 @@ export const createProduct = async (
   }
 };
 
+export const deleteProduct = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const productId = parseInt(id);
+
+    const existingProduct = await prisma.product.findUnique({
+      where: { id: productId },
+    });
+
+    if (!existingProduct) {
+      res.status(404).json({ error: 'Product not found' });
+    }
+
+    await prisma.product.delete({
+      where: { id: productId },
+    });
+
+    res.json({ message: 'Product deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete product' });
+  }
+};
