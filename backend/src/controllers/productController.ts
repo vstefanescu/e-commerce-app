@@ -55,6 +55,7 @@ export const deleteProduct = async (
 
     if (!existingProduct) {
       res.status(404).json({ error: 'Product not found' });
+      return;
     }
 
     await prisma.product.delete({
@@ -64,5 +65,45 @@ export const deleteProduct = async (
     res.json({ message: 'Product deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete product' });
+  }
+};
+
+export const updateProduct = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const productId = parseInt(id);
+
+    const existingProduct = await prisma.product.findUnique({
+      where: { id: productId },
+    });
+
+    if (!existingProduct) {
+      res.status(404).json({ error: 'Product not found' });
+      return;
+    }
+
+    const { title, description, price, imageUrl } = req.body;
+
+    if (!title || !description || !price || !imageUrl) {
+      res.status(400).json({ error: 'Missing fields' });
+      return
+    }
+
+    const updatedProduct = await prisma.product.update({
+      where: { id: productId },
+      data: {
+        title,
+        description,
+        price: parseFloat(price),
+        imageUrl,
+      },
+    });
+
+    res.json(updateProduct);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update product' });
   }
 };
