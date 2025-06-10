@@ -8,7 +8,11 @@ import userRoutes from './routes/userRoutes';
 dotenv.config();
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: 'https://e-commerce-frontend-jade-two.vercel.app',
+  credentials: true
+}));
+
 app.use(express.json());
 app.use('/api/auth', authroutes);
 app.use('/api', userRoutes);
