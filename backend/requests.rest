@@ -24,3 +24,21 @@ Content-Type: application/json
   "price": 123.45,
   "imageUrl": "https://example.com/updated.jpg"
 }
+### TEST REGISTER
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "daria@email.com",
+  "password": "parola123",
+  "name": "Daria"
+}
+
+### TEST LOGIN
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "daria@email.com",
+  "password": "parola123"
+}

@@ -2,12 +2,16 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import productRoutes from './routes/productRoutes';
+import authroutes from './routes/authRoutes';
+import userRoutes from './routes/userRoutes';
 
 dotenv.config();
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use('/api/auth', authroutes);
+app.use('/api', userRoutes);
 
 app.use('/api/products', productRoutes);
 
