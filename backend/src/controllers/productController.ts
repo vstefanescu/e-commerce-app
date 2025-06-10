@@ -1,10 +1,7 @@
 import { Request, Response } from 'express';
 import prisma from '../config/prisma';
 
-export const getAllProducts = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const getAllProducts = async (req: Request, res: Response) => {
   try {
     const products = await prisma.product.findMany();
     res.json(products);
@@ -107,3 +104,27 @@ export const updateProduct = async (
     res.status(500).json({ error: 'Failed to update product' });
   }
 };
+
+const getProductById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const productId = parseInt(id);
+
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+    });
+
+    if (!product) {
+      res.status(404).json({ error: 'Product not found' });
+      return;
+    }
+
+    res.json(product);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch product' });
+  }
+};
+
+export { getProductById };
+
+

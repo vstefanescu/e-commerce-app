@@ -19,7 +19,7 @@ PUT http://localhost:5000/api/products/4
 Content-Type: application/json
 
 {
-  "title": "Updated Product",
+  "title": "sugaci",
   "description": "Updated description",
   "price": 123.45,
   "imageUrl": "https://example.com/updated.jpg"
