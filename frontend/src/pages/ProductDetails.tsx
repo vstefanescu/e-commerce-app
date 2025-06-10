@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { api } from "../lib/api";
 
 type Product = {
   id: number;
@@ -15,14 +16,9 @@ function ProductDetails() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Verificare rapidă în consolă pentru debug
-    console.log("ProductDetails PAGE MOUNTED", id);
+    if (!id) return;
 
-    fetch(`http://localhost:5000/api/products/${id}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Not found");
-        return res.json();
-      })
+    api<Product>(`/api/products/${id}`)
       .then((data) => {
         setProduct(data);
         setLoading(false);

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { api } from "../lib/api";
 
 type Product = {
   id: number;
@@ -14,13 +15,13 @@ function Products() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/products")
-      .then((res) => res.json())
+    api<Product[]>('/api/products')
       .then((data) => {
         console.log("PRODUCTS DATA", data);
         setProducts(data);
         setLoading(false);
-      });
+      })
+      .catch(() => setLoading(false));
   }, []);
 
   if (loading) return <div className="p-8">Loading...</div>;
