@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { api } from '../lib/api'; 
 
 const Login = () => {
   const navigate = useNavigate();
@@ -7,34 +8,27 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
-      });
+  try {
+    const data = await api<{ token: string; user: object }>(
+      '/api/auth/login',
+      'POST',
+      { email, password }
+    );
 
-      if (!response.ok) {
-        const err = await response.json();
-        setError(err.message || 'Login failed');
-        return;
-      }
-
-      const data = await response.json();
-
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-
-      navigate('/profile');
-    } catch {
-      setError('Network error');
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    navigate('/profile');
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      setError(err.message);
+    } else {
+      setError('Login failed');
     }
-  };
+  }
+};
 
   return (
     <div className="max-w-md mx-auto mt-16 p-6 border rounded shadow">
