@@ -1,11 +1,12 @@
 export async function api<T>(
   url: string,
   method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET',
-  body?: Record<string, unknown>
+  body?: any
 ): Promise<T> {
   const token = localStorage.getItem('token');
-  console.log('Using token:', token);
-  const response = await fetch(`https://e-commerce-backend-ov03.onrender.com`, {
+  console.log('Using token:', token); // optional: for debugging
+
+  const response = await fetch(`https://e-commerce-backend-ov03.onrender.com${url}`, {
     method,
     headers: {
       'Content-Type': 'application/json',
@@ -16,8 +17,9 @@ export async function api<T>(
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.message || 'Eroare API');
+    throw new Error(error.message || 'API error');
   }
 
   return response.json();
 }
+
