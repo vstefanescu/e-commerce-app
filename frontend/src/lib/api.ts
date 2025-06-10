@@ -1,10 +1,9 @@
 export async function api<T>(
   url: string,
   method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET',
-  body?: any
+  body?: unknown
 ): Promise<T> {
   const token = localStorage.getItem('token');
-  console.log('Using token:', token); // optional: for debugging
 
   const response = await fetch(`https://e-commerce-backend-ov03.onrender.com${url}`, {
     method,
@@ -22,4 +21,3 @@ export async function api<T>(
 
   return response.json();
 }
-
