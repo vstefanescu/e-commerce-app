@@ -5,7 +5,7 @@ export async function api<T>(
 ): Promise<T> {
   const token = localStorage.getItem('token');
   console.log('Using token:', token);
-  const response = await fetch(`http://localhost:5000${url}`, {
+  const response = await fetch(`https://e-commerce-backend-ov03.onrender.com`, {
     method,
     headers: {
       'Content-Type': 'application/json',
