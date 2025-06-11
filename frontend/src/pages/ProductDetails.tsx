@@ -18,7 +18,7 @@ function ProductDetails() {
   useEffect(() => {
     if (!id) return;
 
-    api<Product>(`/api/products/${id}`)
+    api<Product>(`/api/products/${id}`, 'GET')
       .then((data) => {
         setProduct(data);
         setLoading(false);
