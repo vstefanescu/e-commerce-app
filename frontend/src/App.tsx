@@ -11,6 +11,7 @@ import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import AdminPanel from "./pages/AdminPanel";
 import NotAuthorized from "./pages/NotAuthorized";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -29,6 +30,7 @@ function App() {
 
   return (
     <Router>
+      <Toaster position="top-right" />
       <Navbar
         isLoggedIn={isLoggedIn}
         user={user}
@@ -60,7 +62,6 @@ function App() {
           path="/profile"
           element={<Profile setIsLoggedIn={setIsLoggedIn} setUser={setUser} />}
         />
-
         <Route
           path="/admin/users"
           element={<AdminPanel isLoggedIn={isLoggedIn} user={user} />}
