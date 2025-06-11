@@ -24,7 +24,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     data: { email, password: hashedPassword, name },
   });
 
-  const token = generateToken({ userId: user.id, email: user.email });
+  const token = generateToken({ userId: user.id, email: user.email, role: user.role });
   res.json({
     token,
     user: { id: user.id, email: user.email, name: user.name, role: user.role },
@@ -46,7 +46,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     return;
   }
 
-  const token = generateToken({ userId: user.id, email: user.email });
+  const token = generateToken({ userId: user.id, email: user.email, role: user.role });
   res.json({
     token,
     user: { id: user.id, email: user.email, name: user.name, role: user.role },
