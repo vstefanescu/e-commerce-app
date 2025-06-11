@@ -4,10 +4,15 @@ import './index.css';
 import App from './App.tsx';
 import { AuthProvider } from './context/AuthContext';
 
+import { Provider } from 'react-redux';
+import { store } from './store'; // Sau calea corectă către store.ts
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AuthProvider>
-      <App />
-    </AuthProvider>
+    <Provider store={store}>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </Provider>
   </StrictMode>
 );
