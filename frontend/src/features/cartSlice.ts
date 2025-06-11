@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
-
 export interface CartProduct {
   id: number;
   title: string;
@@ -14,8 +13,27 @@ interface CartState {
   products: CartProduct[];
 }
 
+// Load cart from localStorage
+function loadCartFromLocalStorage(): CartProduct[] {
+  try {
+    const data = localStorage.getItem("cart");
+    return data ? JSON.parse(data) : [];
+  } catch {
+    return [];
+  }
+}
+
+// Save cart to localStorage
+function saveCartToLocalStorage(cart: CartProduct[]) {
+  try {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  } catch {
+    console.error("Could not save cart to localStorage.");
+  }
+}
+
 const initialState: CartState = {
-  products: [],
+  products: loadCartFromLocalStorage(),
 };
 
 const cartSlice = createSlice({
@@ -29,12 +47,15 @@ const cartSlice = createSlice({
       } else {
         state.products.push(action.payload);
       }
+      saveCartToLocalStorage(state.products);
     },
     removeFromCart: (state, action: PayloadAction<number>) => {
       state.products = state.products.filter(p => p.id !== action.payload);
+      saveCartToLocalStorage(state.products);
     },
     clearCart: (state) => {
       state.products = [];
+      saveCartToLocalStorage(state.products);
     },
   },
 });
