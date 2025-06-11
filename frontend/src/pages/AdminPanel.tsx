@@ -26,6 +26,11 @@ function AdminPanel({ isLoggedIn, user }: AdminPanelProps) {
       return;
     }
 
+    if(user?.role !== "admin") {
+      navigate("/login");
+      return;
+    }
+    
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem("token");

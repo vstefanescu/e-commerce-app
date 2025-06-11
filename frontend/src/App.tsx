@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import AdminPanel from "./pages/AdminPanel";
+import NotAuthorized from "./pages/NotAuthorized";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -52,6 +53,7 @@ function App() {
           path="/admin/users"
           element={<AdminPanel isLoggedIn={isLoggedIn} user={user} />}
         />
+        <Route path="/not-authorized" element={<NotAuthorized />} />
       </Routes>
     </Router>
   );
