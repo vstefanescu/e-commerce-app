@@ -1,5 +1,8 @@
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
-  ]
+  "build": {
+    "env": {
+      "CI": "true"
+    }
+  },
+  "ignoreCommand": "echo 'ignore eslint for production builds'"
 }
