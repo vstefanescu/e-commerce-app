@@ -1,23 +1,20 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
 
-function Navbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState<{ role?: string } | null>(null);
+type NavbarProps = {
+  isLoggedIn: boolean;
+  user: { role?: string } | null;
+  setIsLoggedIn: (value: boolean) => void;
+  setUser: (user: { role?: string } | null) => void;
+};
+
+function Navbar({ isLoggedIn, user, setIsLoggedIn, setUser }: NavbarProps) {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const storedUser = localStorage.getItem("user");
-
-    setIsLoggedIn(!!token);
-    setUser(storedUser ? JSON.parse(storedUser) : null);
-  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setIsLoggedIn(false);
+    setUser(null);
     navigate("/login");
   };
 
