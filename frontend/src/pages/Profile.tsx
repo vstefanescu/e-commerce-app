@@ -34,6 +34,7 @@ const Profile = ({ setIsLoggedIn, setUser }: ProfileProps) => {
           token
         );
         setUserProfile(data.user);
+        console.log("PROFILE DATA", data.user);
       } catch (err: unknown) {
         if (err instanceof Error) {
           setError(err.message);
