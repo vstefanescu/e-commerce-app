@@ -1,11 +1,12 @@
-// src/lib/api.ts
+const API_URL = import.meta.env.VITE_API_URL;
+
 export async function api<T>(
   url: string,
   method: string,
-  body?: object,
+  body?: Record<string, unknown>,
   token?: string
 ): Promise<T> {
-  const res = await fetch(url, {
+  const res = await fetch(`${API_URL}${url}`, {
     method,
     headers: {
       "Content-Type": "application/json",
