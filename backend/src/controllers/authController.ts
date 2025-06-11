@@ -11,7 +11,7 @@ const generateToken = (payload: object): string => {
 };
 
 export const register = async (req: Request, res: Response): Promise<void> => {
-  const { email, password, name } = req.body;
+  const { email, password, name, role = "user" } = req.body;
 
   const existingUser = await prisma.user.findUnique({ where: { email } });
   if (existingUser) {
