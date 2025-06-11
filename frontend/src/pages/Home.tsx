@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../lib/api";
 import { Link } from "react-router-dom";
+import TestToast from "../components/TestToast";
 
 type Product = {
   id: number;
@@ -15,7 +16,7 @@ function Home() {
 
   useEffect(() => {
     api<Product[]>("/api/products", "GET")
-      .then(data => {
+      .then((data) => {
         setProducts(data.slice(0, 4));
         setLoading(false);
       })
@@ -40,14 +41,21 @@ function Home() {
           Explore Products
         </Link>
       </div>
+
       {/* GRID PRODUSE */}
       <div className="mt-16 w-full max-w-6xl px-4 mx-auto">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Featured Products</h2>
+
+        {/* Toast test button */}
+        <div className="mb-6">
+          <TestToast />
+        </div>
+
         {loading ? (
           <div className="text-center text-gray-500">Loading...</div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-            {products.map(product => (
+            {products.map((product) => (
               <Link
                 key={product.id}
                 to={`/products/${product.id}`}
