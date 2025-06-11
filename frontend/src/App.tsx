@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
@@ -41,9 +42,20 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route
           path="/login"
-          element={<Login setIsLoggedIn={setIsLoggedIn} setUser={setUser} />}
+          element={
+            isLoggedIn ? (
+              <Navigate to="/profile" replace />
+            ) : (
+              <Login setIsLoggedIn={setIsLoggedIn} setUser={setUser} />
+            )
+          }
         />
-        <Route path="/register" element={<Register />} />
+        <Route
+          path="/register"
+          element={
+            isLoggedIn ? <Navigate to="/profile" replace /> : <Register />
+          }
+        />
         <Route
           path="/profile"
           element={<Profile setIsLoggedIn={setIsLoggedIn} setUser={setUser} />}

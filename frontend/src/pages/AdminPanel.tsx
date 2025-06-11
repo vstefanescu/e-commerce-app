@@ -27,10 +27,10 @@ function AdminPanel({ isLoggedIn, user }: AdminPanelProps) {
     }
 
     if(user?.role !== "admin") {
-      navigate("/login");
+      navigate("/not-authorized");
       return;
     }
-    
+
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem("token");
