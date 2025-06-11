@@ -1,23 +1,20 @@
+// src/lib/api.ts
 export async function api<T>(
   url: string,
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET',
-  body?: unknown
+  method: string,
+  body?: object,
+  token?: string
 ): Promise<T> {
-  const token = localStorage.getItem('token');
-
-  const response = await fetch(`https://e-commerce-backend-ov03.onrender.com${url}`, {
+  const res = await fetch(url, {
     method,
     headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {})
+      "Content-Type": "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }),
     },
-    body: body ? JSON.stringify(body) : undefined
+    ...(body && { body: JSON.stringify(body) }),
   });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'API error');
+  if (!res.ok) {
+    throw new Error("API error");
   }
-
-  return response.json();
+  return res.json();
 }

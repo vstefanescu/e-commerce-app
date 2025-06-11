@@ -2,9 +2,9 @@ import { Link, useNavigate } from "react-router-dom";
 
 type NavbarProps = {
   isLoggedIn: boolean;
-  user: { role?: string } | null;
+  user: { role?: string; email?: string; name?: string } | null;
   setIsLoggedIn: (value: boolean) => void;
-  setUser: (user: { role?: string } | null) => void;
+  setUser: (user: { role?: string; email?: string; name?: string } | null) => void;
 };
 
 function Navbar({ isLoggedIn, user, setIsLoggedIn, setUser }: NavbarProps) {
@@ -24,43 +24,25 @@ function Navbar({ isLoggedIn, user, setIsLoggedIn, setUser }: NavbarProps) {
         <Link to="/">E-Commerce</Link>
       </div>
       <div>
-        <Link className="mx-2" to="/products">
-          Products
-        </Link>
-        <Link className="mx-2" to="/cart">
-          Cart
-        </Link>
+        <Link className="mx-2" to="/products">Products</Link>
+        <Link className="mx-2" to="/cart">Cart</Link>
 
         {isLoggedIn ? (
           <>
-            <Link className="mx-2" to="/profile">
-              Profile
-            </Link>
-
+            <Link className="mx-2" to="/profile">Profile</Link>
             {user?.role === "admin" && (
-              <Link
-                className="mx-2 text-yellow-400 hover:text-yellow-300"
-                to="/admin/users"
-              >
+              <Link className="mx-2 text-yellow-400 hover:text-yellow-300" to="/admin/users">
                 Admin Panel
               </Link>
             )}
-
-            <button
-              onClick={handleLogout}
-              className="mx-2 text-red-400 hover:text-red-300"
-            >
+            <button onClick={handleLogout} className="mx-2 text-red-400 hover:text-red-300">
               Logout
             </button>
           </>
         ) : (
           <>
-            <Link className="mx-2" to="/login">
-              Login
-            </Link>
-            <Link className="mx-2" to="/register">
-              Register
-            </Link>
+            <Link className="mx-2" to="/login">Login</Link>
+            <Link className="mx-2" to="/register">Register</Link>
           </>
         )}
       </div>

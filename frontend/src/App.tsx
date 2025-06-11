@@ -12,7 +12,7 @@ import AdminPanel from './pages/AdminPanel';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState<{ role?: string } | null>(null);
+  const [user, setUser] = useState<{ role?: string; email?: string; name?: string } | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -32,7 +32,7 @@ function App() {
         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} setUser={setUser} />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/admin/users" element={<AdminPanel />} />
+        <Route path="/admin/users" element={<AdminPanel isLoggedIn={isLoggedIn} user={user} />} />
       </Routes>
     </Router>
   );
