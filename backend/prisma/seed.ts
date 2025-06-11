@@ -1,16 +1,16 @@
 import { PrismaClient } from '@prisma/client';
 import fetch from 'node-fetch';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 async function main() {
+  // 1. Seed produse
   await prisma.product.deleteMany();
 
-  // Ia datele reale din API
   const response = await fetch('https://fakestoreapi.com/products');
   const products = await response.json() as any[];
 
-  // Adaptare: produsele au { title, description, price, image }
   const data = products.map((p: any) => ({
     title: p.title,
     description: p.description,
@@ -19,13 +19,30 @@ async function main() {
   }));
 
   await prisma.product.createMany({ data });
-  console.log('Seeded with real products from fakestoreapi!');
+  console.log('✅ Seeded with products from fakestoreapi!');
+
+  // 2. Seed user admin
+  const hashedPassword = await bcrypt.hash('zapacit123', 10);
+
+  await prisma.user.upsert({
+    where: { email: 'admin@gmail.com' },
+    update: {}, // dacă există, nu face nimic
+    create: {
+      name: 'Admin',
+      email: 'admin@gmail.com',
+      password: hashedPassword,
+      role: 'admin'
+    }
+  });
+
+  console.log('✅ Admin user created with email: admin@gmail.com / password: zapacit123');
 }
 
 main()
-  .then(() => prisma.$disconnect())
-  .catch(e => {
+  .catch((e) => {
     console.error(e);
-    prisma.$disconnect();
     process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
   });
