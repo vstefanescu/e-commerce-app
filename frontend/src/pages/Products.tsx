@@ -15,7 +15,7 @@ function Products() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api<Product[]>('/api/products')
+    api<Product[]>('/api/products', 'GET')
       .then((data) => {
         console.log("PRODUCTS DATA", data);
         setProducts(data);
