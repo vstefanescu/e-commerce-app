@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
@@ -11,6 +10,7 @@ import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import AdminPanel from "./pages/AdminPanel";
 import NotAuthorized from "./pages/NotAuthorized";
+import Checkout from "./pages/Checkout";
 import { Toaster } from "react-hot-toast";
 
 function App() {
@@ -42,6 +42,7 @@ function App() {
         <Route path="/products" element={<Products />} />
         <Route path="/products/:id" element={<ProductDetails />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
         <Route
           path="/login"
           element={
