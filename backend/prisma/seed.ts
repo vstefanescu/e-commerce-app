@@ -10,7 +10,6 @@ const fetch = async (url: RequestInfo, init?: RequestInit) => {
 const prisma = new PrismaClient();
 
 async function main() {
-  // 1. Seed produse
   await prisma.product.deleteMany();
 
   const response = await fetch("https://fakestoreapi.com/products");
@@ -26,8 +25,7 @@ async function main() {
   await prisma.product.createMany({ data });
   console.log("✅ Seeded with products from fakestoreapi!");
 
-  // 2. Seed user admin
-  const hashedPassword = await bcrypt.hash("zapacit123", 10);
+  const hashedPassword = await bcrypt.hash("admin", 10);
 
   await prisma.user.upsert({
     where: { email: "admin@gmail.com" },

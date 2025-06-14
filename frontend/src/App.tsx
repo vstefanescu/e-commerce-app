@@ -5,6 +5,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
@@ -25,12 +26,7 @@ type Toast = {
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState<{
-    role?: string;
-    email?: string;
-    name?: string;
-  } | null>(null);
-
+  const [user, setUser] = useState<{ role?: string; email?: string; name?: string } | null>(null);
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   useEffect(() => {
@@ -63,12 +59,10 @@ function App() {
       />
 
       <Routes>
+        {/* Home nu primește props deoarece nu le folosește */}
         <Route path="/" element={<Home />} />
         <Route path="/products" element={<Products addToast={addToast} />} />
-        <Route
-          path="/products/:id"
-          element={<ProductDetails addToast={addToast} />}
-        />
+        <Route path="/products/:id" element={<ProductDetails addToast={addToast} />} />
         <Route path="/cart" element={<Cart addToast={addToast} />} />
         <Route path="/checkout" element={<Checkout addToast={addToast} />} />
         <Route
@@ -77,40 +71,22 @@ function App() {
             isLoggedIn ? (
               <Navigate to="/profile" replace />
             ) : (
-              <Login
-                setIsLoggedIn={setIsLoggedIn}
-                setUser={setUser}
-                addToast={addToast}
-              />
+              <Login setIsLoggedIn={setIsLoggedIn} setUser={setUser} addToast={addToast} />
             )
           }
         />
         <Route
           path="/register"
-          element={
-            isLoggedIn ? (
-              <Navigate to="/profile" replace />
-            ) : (
-              <Register addToast={addToast} />
-            )
-          }
+          element={isLoggedIn ? <Navigate to="/profile" replace /> : <Register addToast={addToast} />}
         />
         <Route
           path="/profile"
-          element={
-            <Profile
-              setIsLoggedIn={setIsLoggedIn}
-              setUser={setUser}
-              addToast={addToast}
-            />
-          }
+          element={<Profile setIsLoggedIn={setIsLoggedIn} setUser={setUser} addToast={addToast} />}
         />
-        <Route
-          path="/admin/users"
-          element={<AdminPanel isLoggedIn={isLoggedIn} user={user} />}
-        />
+        <Route path="/admin/users" element={<AdminPanel isLoggedIn={isLoggedIn} user={user} />} />
         <Route path="/not-authorized" element={<NotAuthorized />} />
       </Routes>
+
       <ToastList toasts={toasts} removeToast={removeToast} />
     </Router>
   );

@@ -9,9 +9,8 @@ type NavbarProps = {
   setUser: (user: { role?: string; email?: string; name?: string } | null) => void;
 };
 
-function Navbar({ isLoggedIn, user, setIsLoggedIn, setUser }: NavbarProps) {
+export default function Navbar({ isLoggedIn, user, setIsLoggedIn, setUser }: NavbarProps) {
   const navigate = useNavigate();
-
   const cartItems = useSelector((state: RootState) => state.cart.products);
   const cartQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -24,17 +23,22 @@ function Navbar({ isLoggedIn, user, setIsLoggedIn, setUser }: NavbarProps) {
   };
 
   return (
-    <nav className="bg-gray-800 text-white p-4 flex justify-between items-center">
-      <div className="text-xl font-bold">
-        <Link to="/">E-Commerce</Link>
+    <nav className="bg-indigo-700 text-white px-6 py-4 flex justify-between items-center shadow-md">
+      <div className="text-2xl font-extrabold tracking-tight">
+        <Link to="/" className="hover:text-indigo-300 transition">
+          Market
+        </Link>
       </div>
-      <div className="flex items-center gap-4">
-        <Link className="mx-2" to="/products">Products</Link>
 
-        <Link className="mx-2 relative" to="/cart">
-          Cart
+      <div className="flex items-center space-x-6 text-lg font-medium">
+        <Link to="/products" className="hover:text-indigo-300 transition">
+          Produse
+        </Link>
+
+        <Link to="/cart" className="relative hover:text-indigo-300 transition">
+          Coș
           {cartQuantity > 0 && (
-            <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+            <span className="absolute -top-2 -right-3 bg-red-500 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
               {cartQuantity}
             </span>
           )}
@@ -42,25 +46,37 @@ function Navbar({ isLoggedIn, user, setIsLoggedIn, setUser }: NavbarProps) {
 
         {isLoggedIn ? (
           <>
-            <Link className="mx-2" to="/profile">Profile</Link>
+            <Link to="/profile" className="hover:text-indigo-300 transition">
+              Profil
+            </Link>
+
             {user?.role === "admin" && (
-              <Link className="mx-2 text-yellow-400 hover:text-yellow-300" to="/admin/users">
+              <Link
+                to="/admin/users"
+                className="text-yellow-300 hover:text-yellow-400 transition font-semibold"
+              >
                 Admin Panel
               </Link>
             )}
-            <button onClick={handleLogout} className="mx-2 text-red-400 hover:text-red-300">
+
+            <button
+              onClick={handleLogout}
+              className="ml-4 bg-red-600 px-3 py-1 rounded hover:bg-red-500 transition text-white font-semibold"
+            >
               Logout
             </button>
           </>
         ) : (
           <>
-            <Link className="mx-2" to="/login">Login</Link>
-            <Link className="mx-2" to="/register">Register</Link>
+            <Link to="/login" className="hover:text-indigo-300 transition">
+              Login
+            </Link>
+            <Link to="/register" className="hover:text-indigo-300 transition">
+              Register
+            </Link>
           </>
         )}
       </div>
     </nav>
   );
 }
-
-export default Navbar;
