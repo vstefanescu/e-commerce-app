@@ -4,6 +4,8 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
+    "dev:local": "copy .env.local .env && vite",
+    "dev:web": "copy .env.web .env && vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"

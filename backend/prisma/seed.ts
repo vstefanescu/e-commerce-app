@@ -1,6 +1,11 @@
-import { PrismaClient } from '@prisma/client';
-import fetch from 'node-fetch';
-import bcrypt from 'bcryptjs';
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
+import type { RequestInfo, RequestInit } from "node-fetch";
+
+const fetch = async (url: RequestInfo, init?: RequestInit) => {
+  const mod = await import("node-fetch");
+  return mod.default(url, init);
+};
 
 const prisma = new PrismaClient();
 
@@ -8,8 +13,8 @@ async function main() {
   // 1. Seed produse
   await prisma.product.deleteMany();
 
-  const response = await fetch('https://fakestoreapi.com/products');
-  const products = await response.json() as any[];
+  const response = await fetch("https://fakestoreapi.com/products");
+  const products = (await response.json()) as any[];
 
   const data = products.map((p: any) => ({
     title: p.title,
@@ -19,23 +24,25 @@ async function main() {
   }));
 
   await prisma.product.createMany({ data });
-  console.log('✅ Seeded with products from fakestoreapi!');
+  console.log("✅ Seeded with products from fakestoreapi!");
 
   // 2. Seed user admin
-  const hashedPassword = await bcrypt.hash('zapacit123', 10);
+  const hashedPassword = await bcrypt.hash("zapacit123", 10);
 
   await prisma.user.upsert({
-    where: { email: 'admin@gmail.com' },
-    update: {}, // dacă există, nu face nimic
+    where: { email: "admin@gmail.com" },
+    update: {},
     create: {
-      name: 'Admin',
-      email: 'admin@gmail.com',
+      name: "Admin",
+      email: "admin@gmail.com",
       password: hashedPassword,
-      role: 'admin'
-    }
+      role: "admin",
+    },
   });
 
-  console.log('✅ Admin user created with email: admin@gmail.com / password: zapacit123');
+  console.log(
+    "✅ Admin user created with email: admin@gmail.com / password: zapacit123"
+  );
 }
 
 main()

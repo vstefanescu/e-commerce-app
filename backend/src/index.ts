@@ -10,7 +10,7 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-  origin: ['https://e-commerce-frontend-jade-two.vercel.app'],
+  origin: ['http://localhost:5173'], // sau și domeniul Vercel dacă vrei
   credentials: true
 }));
 app.use(express.json());

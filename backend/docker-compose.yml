@@ -1,16 +1,16 @@
-version: '3'
 services:
   postgres:
-    image: postgres
+    image: postgres:15
     restart: always
+    container_name: backend-postgres
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: ecommerce
+      POSTGRES_DB: e_commerce_db
     volumes:
-      - postgres-data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+      - pgdata:/var/lib/postgresql/data
 
 volumes:
-  postgres-data:
+  pgdata:
