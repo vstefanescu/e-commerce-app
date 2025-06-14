@@ -1,26 +1,28 @@
-import express from 'express';
-import dotenv from 'dotenv';
-import cors from 'cors';
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
 
-import productRoutes from './routes/productRoutes';
-import authroutes from './routes/authRoutes';
-import userRoutes from './routes/userRoutes';
+import productRoutes from "./routes/productRoutes";
+import authroutes from "./routes/authRoutes";
+import userRoutes from "./routes/userRoutes";
 
 dotenv.config();
 const app = express();
 
-app.use(cors({
-  origin: ['http://localhost:5173'], // sau și domeniul Vercel dacă vrei
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN?.split(","),
+    credentials: true,
+  })
+);
+
 app.use(express.json());
+app.use("/api/auth", authroutes);
+app.use("/api", userRoutes);
+app.use("/api/products", productRoutes);
 
-app.use('/api/auth', authroutes);
-app.use('/api', userRoutes);
-app.use('/api/products', productRoutes);
-
-app.get('/api/hello', (req, res) => {
-  res.json({ message: 'Hello from backend!' });
+app.get("/api/hello", (req, res) => {
+  res.json({ message: "Hello from backend!" });
 });
 
 const PORT = process.env.PORT || 5000;
