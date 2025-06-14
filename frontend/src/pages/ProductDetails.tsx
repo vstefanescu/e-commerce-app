@@ -25,8 +25,7 @@ function ProductDetails({ addToast }: ProductDetailsProps) {
   useEffect(() => {
     if (!id) return;
 
-    // Ai grijă la ruta! /products/:id dacă ai setat în backend ca /api/products/:id
-    api<Product>(`/products/${id}`, "GET")
+    api<Product>(`/api/products/${id}`, "GET")
       .then((data) => {
         setProduct(data);
         setLoading(false);
