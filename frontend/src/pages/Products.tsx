@@ -12,7 +12,11 @@ type Product = {
   description: string;
 };
 
-function Products() {
+type ProductsProps = {
+  addToast: (message: string) => void;
+};
+
+function Products({ addToast }: ProductsProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
@@ -20,7 +24,6 @@ function Products() {
   useEffect(() => {
     api<Product[]>("/api/products", "GET")
       .then((data) => {
-        console.log("PRODUCTS DATA", data);
         setProducts(data);
         setLoading(false);
       })
@@ -37,6 +40,7 @@ function Products() {
         quantity: 1,
       })
     );
+    addToast("Produsul a fost adăugat în coș!");
   };
 
   if (loading) return <div className="p-8">Loading...</div>;

@@ -5,9 +5,10 @@ import { api } from '../lib/api';
 type LoginProps = {
   setIsLoggedIn: (value: boolean) => void;
   setUser: (user: { role?: string } | null) => void;
+  addToast: (msg: string) => void;
 };
 
-const Login = ({ setIsLoggedIn, setUser }: LoginProps) => {
+const Login = ({ setIsLoggedIn, setUser, addToast }: LoginProps) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,13 +28,15 @@ const Login = ({ setIsLoggedIn, setUser }: LoginProps) => {
       localStorage.setItem('user', JSON.stringify(data.user));
       setIsLoggedIn(true);
       setUser(data.user);
+      addToast("Autentificare reușită!");
       navigate('/profile');
     } catch (err: unknown) {
+      let msg = "Autentificare eșuată";
       if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('Login failed');
+        msg = err.message;
       }
+      setError(msg);
+      addToast(msg);
     }
   };
 

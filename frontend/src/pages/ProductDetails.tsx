@@ -13,10 +13,10 @@ type Product = {
 };
 
 type ProductDetailsProps = {
-  triggerAlert?: (message: string) => void;
+  addToast: (message: string) => void;
 };
 
-function ProductDetails({ triggerAlert }: ProductDetailsProps) {
+function ProductDetails({ addToast }: ProductDetailsProps) {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -25,7 +25,8 @@ function ProductDetails({ triggerAlert }: ProductDetailsProps) {
   useEffect(() => {
     if (!id) return;
 
-    api<Product>(`/api/products/${id}`, 'GET')
+    // Ai grijă la ruta! /products/:id dacă ai setat în backend ca /api/products/:id
+    api<Product>(`/products/${id}`, "GET")
       .then((data) => {
         setProduct(data);
         setLoading(false);
@@ -36,15 +37,15 @@ function ProductDetails({ triggerAlert }: ProductDetailsProps) {
       });
   }, [id]);
 
- const handleAddToCart = () => {
-  if (product) {
-    dispatch(addToCart({ ...product, quantity: 1 }));
-    triggerAlert?.("Produsul a fost adăugat în coș");
-  }
-};
+  const handleAddToCart = () => {
+    if (product) {
+      dispatch(addToCart({ ...product, quantity: 1 }));
+      addToast("Produsul a fost adăugat în coș!");
+    }
+  };
 
   if (loading) return <div className="p-8">Loading...</div>;
-  if (!product) return <div className="p-8">Product not found.</div>;
+  if (!product) return <div className="p-8">Produsul nu a fost găsit.</div>;
 
   return (
     <div className="p-8 max-w-2xl mx-auto bg-white rounded-lg shadow-lg">

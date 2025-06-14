@@ -2,7 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
 
-const Register = () => {
+type RegisterProps = {
+  addToast: (msg: string) => void;
+};
+
+const Register = ({ addToast }: RegisterProps) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -12,19 +16,24 @@ const Register = () => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
-  try {
-    const data = await api<{ token: string; user: object }>(
-      '/api/auth/register',
-      'POST',
-      { email, name, password }
-    );
+    try {
+      const data = await api<{ token: string; user: object }>(
+        '/api/auth/register',
+        'POST',
+        { email, name, password }
+      );
 
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-
+      addToast('Cont creat cu succes! Bine ai venit!');
       navigate('/profile');
-    } catch {
-      setError('Network error');
+    } catch (err: unknown) {
+      let msg = "Eroare la crearea contului";
+      if (err instanceof Error) {
+        msg = err.message;
+      }
+      setError(msg);
+      addToast(msg);
     }
   };
 

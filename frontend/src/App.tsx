@@ -16,7 +16,12 @@ import Profile from "./pages/Profile";
 import AdminPanel from "./pages/AdminPanel";
 import NotAuthorized from "./pages/NotAuthorized";
 import Checkout from "./pages/Checkout";
-import AlertBox from "./components/AlertBox";
+import ToastList from "./components/ToastList";
+
+type Toast = {
+  id: number;
+  message: string;
+};
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -25,7 +30,8 @@ function App() {
     email?: string;
     name?: string;
   } | null>(null);
-  const [popupMessage, setPopupMessage] = useState("");
+
+  const [toasts, setToasts] = useState<Toast[]>([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -34,8 +40,17 @@ function App() {
     setUser(storedUser ? JSON.parse(storedUser) : null);
   }, []);
 
-  const triggerAlert = (message: string) => {
-    setPopupMessage(message);
+  const addToast = (message: string) => {
+    setToasts((prev) => {
+      if (prev.length >= 5) {
+        return [...prev.slice(1), { id: Date.now() + Math.random(), message }];
+      }
+      return [...prev, { id: Date.now() + Math.random(), message }];
+    });
+  };
+
+  const removeToast = (id: number) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
   return (
@@ -49,32 +64,46 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/products" element={<Products />} />
+        <Route path="/products" element={<Products addToast={addToast} />} />
         <Route
           path="/products/:id"
-          element={<ProductDetails triggerAlert={triggerAlert} />}
+          element={<ProductDetails addToast={addToast} />}
         />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/cart" element={<Cart addToast={addToast} />} />
+        <Route path="/checkout" element={<Checkout addToast={addToast} />} />
         <Route
           path="/login"
           element={
             isLoggedIn ? (
               <Navigate to="/profile" replace />
             ) : (
-              <Login setIsLoggedIn={setIsLoggedIn} setUser={setUser} />
+              <Login
+                setIsLoggedIn={setIsLoggedIn}
+                setUser={setUser}
+                addToast={addToast}
+              />
             )
           }
         />
         <Route
           path="/register"
           element={
-            isLoggedIn ? <Navigate to="/profile" replace /> : <Register />
+            isLoggedIn ? (
+              <Navigate to="/profile" replace />
+            ) : (
+              <Register addToast={addToast} />
+            )
           }
         />
         <Route
           path="/profile"
-          element={<Profile setIsLoggedIn={setIsLoggedIn} setUser={setUser} />}
+          element={
+            <Profile
+              setIsLoggedIn={setIsLoggedIn}
+              setUser={setUser}
+              addToast={addToast}
+            />
+          }
         />
         <Route
           path="/admin/users"
@@ -82,10 +111,7 @@ function App() {
         />
         <Route path="/not-authorized" element={<NotAuthorized />} />
       </Routes>
-
-      {popupMessage && (
-        <AlertBox message={popupMessage} onClose={() => setPopupMessage("")} />
-      )}
+      <ToastList toasts={toasts} removeToast={removeToast} />
     </Router>
   );
 }

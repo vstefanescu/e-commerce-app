@@ -3,7 +3,11 @@ import type { RootState } from "../store";
 import { removeFromCart, clearCart } from "../features/cartSlice";
 import { Link } from "react-router-dom";
 
-const Cart = () => {
+type CartProps = {
+  addToast: (message: string) => void;
+};
+
+const Cart = ({ addToast }: CartProps) => {
   const products = useSelector((state: RootState) => state.cart.products);
   const dispatch = useDispatch();
 
@@ -14,10 +18,12 @@ const Cart = () => {
 
   const handleRemove = (id: number) => {
     dispatch(removeFromCart(id));
+    addToast("Produsul a fost eliminat din coș");
   };
 
   const handleClearCart = () => {
     dispatch(clearCart());
+    addToast("Coșul a fost golit");
   };
 
   return (

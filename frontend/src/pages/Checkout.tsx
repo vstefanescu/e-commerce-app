@@ -4,7 +4,11 @@ import { clearCart } from "../features/cartSlice";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-const Checkout = () => {
+type CheckoutProps = {
+  addToast: (msg: string) => void;
+};
+
+const Checkout = ({ addToast }: CheckoutProps) => {
   const products = useSelector((state: RootState) => state.cart.products);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -25,6 +29,7 @@ const Checkout = () => {
     e.preventDefault();
 
     dispatch(clearCart());
+    addToast("Comanda a fost trimisă cu succes!");
     navigate("/products");
   };
 

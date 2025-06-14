@@ -12,6 +12,7 @@ interface User {
 type ProfileProps = {
   setIsLoggedIn: (v: boolean) => void;
   setUser: (u: User | null) => void;
+  addToast: (msg: string) => void; // toast pentru notificări
 };
 
 function getInitials(name?: string, email?: string) {
@@ -26,7 +27,7 @@ function getInitials(name?: string, email?: string) {
   return "U";
 }
 
-const Profile = ({ setIsLoggedIn, setUser }: ProfileProps) => {
+const Profile = ({ setIsLoggedIn, setUser, addToast }: ProfileProps) => {
   const navigate = useNavigate();
   const [user, setUserProfile] = useState<User | null>(null);
   const [error, setError] = useState("");
@@ -47,7 +48,7 @@ const Profile = ({ setIsLoggedIn, setUser }: ProfileProps) => {
           token
         );
         setUserProfile(data.user);
-        console.log("PROFILE DATA", data.user);
+        // console.log("PROFILE DATA", data.user);
       } catch {
         setError("Profile fetch failed");
         navigate("/login");
@@ -86,6 +87,7 @@ const Profile = ({ setIsLoggedIn, setUser }: ProfileProps) => {
             localStorage.removeItem("user");
             setIsLoggedIn(false);
             setUser(null);
+            addToast("Te-ai delogat!");
             navigate("/login");
           }}
           className="mt-6 bg-red-600 text-white py-2 px-6 rounded-xl hover:bg-red-700 transition"
