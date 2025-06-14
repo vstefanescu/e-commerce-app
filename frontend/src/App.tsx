@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
@@ -11,7 +16,7 @@ import Profile from "./pages/Profile";
 import AdminPanel from "./pages/AdminPanel";
 import NotAuthorized from "./pages/NotAuthorized";
 import Checkout from "./pages/Checkout";
-import { Toaster } from "react-hot-toast";
+import AlertBox from "./components/AlertBox";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -20,6 +25,7 @@ function App() {
     email?: string;
     name?: string;
   } | null>(null);
+  const [popupMessage, setPopupMessage] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -28,19 +34,26 @@ function App() {
     setUser(storedUser ? JSON.parse(storedUser) : null);
   }, []);
 
+  const triggerAlert = (message: string) => {
+    setPopupMessage(message);
+  };
+
   return (
     <Router>
-      <Toaster position="top-right" />
       <Navbar
         isLoggedIn={isLoggedIn}
         user={user}
         setIsLoggedIn={setIsLoggedIn}
         setUser={setUser}
       />
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/products" element={<Products />} />
-        <Route path="/products/:id" element={<ProductDetails />} />
+        <Route
+          path="/products/:id"
+          element={<ProductDetails triggerAlert={triggerAlert} />}
+        />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route
@@ -69,6 +82,10 @@ function App() {
         />
         <Route path="/not-authorized" element={<NotAuthorized />} />
       </Routes>
+
+      {popupMessage && (
+        <AlertBox message={popupMessage} onClose={() => setPopupMessage("")} />
+      )}
     </Router>
   );
 }

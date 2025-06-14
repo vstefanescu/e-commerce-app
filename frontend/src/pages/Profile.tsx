@@ -48,7 +48,7 @@ const Profile = ({ setIsLoggedIn, setUser }: ProfileProps) => {
         );
         setUserProfile(data.user);
         console.log("PROFILE DATA", data.user);
-      } catch (err: unknown) {
+      } catch {
         setError("Profile fetch failed");
         navigate("/login");
       }

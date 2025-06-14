@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../lib/api";
 import { Link } from "react-router-dom";
-import TestToast from "../components/TestToast";
 
 type Product = {
   id: number;
@@ -31,8 +30,10 @@ function Home() {
           Welcome to <span className="text-indigo-600">E-Commerce Demo</span>!
         </h1>
         <p className="text-lg md:text-2xl text-gray-600 mb-8 text-center max-w-2xl">
-          Discover products, manage your cart, and explore admin features. <br />
-          This is a modern full-stack demo built with React, Node, Prisma & PostgreSQL.
+          Discover products, manage your cart, and explore admin features.{" "}
+          <br />
+          This is a modern full-stack demo built with React, Node, Prisma &
+          PostgreSQL.
         </p>
         <Link
           to="/products"
@@ -42,14 +43,10 @@ function Home() {
         </Link>
       </div>
 
-      {/* GRID PRODUSE */}
       <div className="mt-16 w-full max-w-6xl px-4 mx-auto">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">Featured Products</h2>
-
-        {/* Toast test button */}
-        <div className="mb-6">
-          <TestToast />
-        </div>
+        <h2 className="text-2xl font-bold mb-6 text-gray-800">
+          Featured Products
+        </h2>
 
         {loading ? (
           <div className="text-center text-gray-500">Loading...</div>
@@ -66,7 +63,9 @@ function Home() {
                   alt={product.title}
                   className="h-32 object-contain mb-4"
                 />
-                <div className="font-semibold mb-1 text-center">{product.title}</div>
+                <div className="font-semibold mb-1 text-center">
+                  {product.title}
+                </div>
                 <div className="text-indigo-600 font-bold text-lg mb-2">
                   {product.price} RON
                 </div>

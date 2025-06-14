@@ -2,7 +2,6 @@ import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../store";
 import { clearCart } from "../features/cartSlice";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast";
 import { useState } from "react";
 
 const Checkout = () => {
@@ -25,19 +24,7 @@ const Checkout = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!form.name || !form.email || !form.address) {
-      toast.error("Completează toate câmpurile!");
-      return;
-    }
-
-    if (products.length === 0) {
-      toast.error("Coșul este gol.");
-      return;
-    }
-
-    // Simulăm trimiterea comenzii
     dispatch(clearCart());
-    toast.success("Comandă trimisă cu succes!");
     navigate("/products");
   };
 

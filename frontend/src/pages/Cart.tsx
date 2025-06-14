@@ -1,23 +1,23 @@
-import { useSelector, useDispatch } from 'react-redux';
-import type { RootState } from '../store';
-import { removeFromCart, clearCart } from '../features/cartSlice';
-import { Link } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
+import { useSelector, useDispatch } from "react-redux";
+import type { RootState } from "../store";
+import { removeFromCart, clearCart } from "../features/cartSlice";
+import { Link } from "react-router-dom";
 
 const Cart = () => {
   const products = useSelector((state: RootState) => state.cart.products);
   const dispatch = useDispatch();
 
-  const total = products.reduce((acc, prod) => acc + prod.price * prod.quantity, 0);
+  const total = products.reduce(
+    (acc, prod) => acc + prod.price * prod.quantity,
+    0
+  );
 
   const handleRemove = (id: number) => {
     dispatch(removeFromCart(id));
-    toast.success("Produs eliminat din coș");
   };
 
   const handleClearCart = () => {
     dispatch(clearCart());
-    toast("Coșul a fost golit");
   };
 
   return (
@@ -30,12 +30,21 @@ const Cart = () => {
         <>
           <ul className="space-y-4">
             {products.map((prod) => (
-              <li key={prod.id} className="flex items-center justify-between bg-white rounded-2xl shadow p-4">
+              <li
+                key={prod.id}
+                className="flex items-center justify-between bg-white rounded-2xl shadow p-4"
+              >
                 <div className="flex items-center gap-4">
-                  <img src={prod.imageUrl} alt={prod.title} className="w-16 h-16 rounded-xl object-cover" />
+                  <img
+                    src={prod.imageUrl}
+                    alt={prod.title}
+                    className="w-16 h-16 rounded-xl object-cover"
+                  />
                   <div>
                     <div className="font-medium">{prod.title}</div>
-                    <div className="text-sm text-gray-500">{prod.price} RON x {prod.quantity}</div>
+                    <div className="text-sm text-gray-500">
+                      {prod.price} RON x {prod.quantity}
+                    </div>
                   </div>
                 </div>
                 <button

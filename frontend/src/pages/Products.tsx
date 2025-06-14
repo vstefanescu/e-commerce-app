@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { api } from "../lib/api";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../features/cartSlice";
-import { toast } from "react-hot-toast";
 
 type Product = {
   id: number;
@@ -38,7 +37,6 @@ function Products() {
         quantity: 1,
       })
     );
-    toast.success(`${product.title} a fost adăugat în coș!`);
   };
 
   if (loading) return <div className="p-8">Loading...</div>;
