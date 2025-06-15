@@ -8,6 +8,14 @@
     {
       "source": "/api/:path*",
       "destination": "https://e-commerce-backend-ov03.onrender.com/api/:path*"
+    },
+    {
+      "source": "/uploads/:path*",
+      "destination": "https://e-commerce-backend-ov03.onrender.com/uploads/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/"
     }
   ]
 }
