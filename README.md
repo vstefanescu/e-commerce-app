@@ -2,6 +2,7 @@
 Market is a full-stack e-commerce application built with modern technologies like Node.js, Express, PostgreSQL, Prisma, React, and Tailwind CSS. It includes authentication, admin management tools, product uploads, and a shopping cart experience.
 
 🚀 Features
+
 🧑‍💼 Authentication
 JWT-based login/register system
 
