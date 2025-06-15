@@ -327,7 +327,7 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
                   <img
                     src={imageUrl}
                     alt="Previzualizare"
-                    className="mt-2 mx-auto max-h-40 object-contain rounded"
+                    className="mt-2 mx-auto w-full max-h-40 object-contain aspect-video rounded transition-all duration-300"
                   />
                 )}
               </div>
@@ -365,7 +365,8 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
             <img
               src={product.imageUrl}
               alt={product.title}
-              className="h-40 object-contain rounded mb-4"
+              loading="lazy"
+              className="w-full h-40 object-contain aspect-video rounded mb-4 transition-all duration-300"
             />
             <h3 className="text-lg font-semibold mb-1">{product.title}</h3>
             <p className="text-green-700 font-bold mb-2">{product.price} RON</p>
