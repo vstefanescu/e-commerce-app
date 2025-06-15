@@ -35,7 +35,12 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
       try {
         const token = localStorage.getItem("token");
         if (!token) throw new Error("Not authenticated");
-        const data = await api<Product[]>("/api/products", "GET", undefined, token);
+        const data = await api<Product[]>(
+          "/api/products",
+          "GET",
+          undefined,
+          token
+        );
         setProducts(data);
         setLoading(false);
       } catch (err) {
@@ -94,6 +99,7 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
 
       let finalImageUrl = imageUrl.trim();
 
+      // ✅ Dacă există fișierul real, îl trimitem la backend
       if (imageFile) {
         const formData = new FormData();
         formData.append("file", imageFile);
@@ -110,16 +116,19 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
 
         const uploadData = await uploadRes.json();
         finalImageUrl = uploadData.imageUrl;
+
+        console.log("✅ finalImageUrl primit de la backend:", finalImageUrl);
       }
 
       const priceNumber = parseFloat(price);
+
       const newProd = await api<Product>(
         "/api/products",
         "POST",
         {
           title: title.trim(),
           price: priceNumber,
-          imageUrl: finalImageUrl,
+          imageUrl: finalImageUrl, // 👈 Folosește doar URL-ul real
           description: description.trim(),
         },
         token
@@ -127,13 +136,16 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
 
       setProducts((prev) => [newProd, ...prev]);
       addToast("Produs adăugat cu succes!");
+
+      // 🧼 Reset formular
       setTitle("");
       setPrice("");
       setImageUrl("");
-      setDescription("");
       setImageFile(null);
+      setDescription("");
       setShowAdd(false);
-    } catch {
+    } catch (err) {
+      console.error("Eroare la handleAddProduct:", err);
       addToast("Eroare la adăugarea produsului.");
     }
 
@@ -217,7 +229,9 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
 
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-8 bg-white rounded-xl shadow-lg">
-      <h1 className="text-3xl font-bold mb-6 text-green-700">Panou Administrare Produse</h1>
+      <h1 className="text-3xl font-bold mb-6 text-green-700">
+        Panou Administrare Produse
+      </h1>
 
       <div className="mb-6 flex justify-end">
         <button
@@ -256,18 +270,61 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
               onSubmit={editProduct ? handleEditProduct : handleAddProduct}
               className="space-y-4"
             >
-              <input type="text" className="w-full border rounded p-2" value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="Titlu" />
-              <input type="number" className="w-full border rounded p-2" value={price} onChange={(e) => setPrice(e.target.value)} required min={0} step="any" placeholder="Preț" />
-              <div {...getRootProps({ className: "w-full border-2 border-dashed border-gray-300 rounded p-4 text-center cursor-pointer bg-gray-50 hover:bg-gray-100 transition" })}>
+              <input
+                type="text"
+                className="w-full border rounded p-2"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+                placeholder="Titlu"
+              />
+              <input
+                type="number"
+                className="w-full border rounded p-2"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                required
+                min={0}
+                step="any"
+                placeholder="Preț"
+              />
+              <div
+                {...getRootProps({
+                  className:
+                    "w-full border-2 border-dashed border-gray-300 rounded p-4 text-center cursor-pointer bg-gray-50 hover:bg-gray-100 transition",
+                })}
+              >
                 <input {...getInputProps()} />
-                <p className="text-sm text-gray-600">Trage o imagine aici sau apasă pentru a selecta una</p>
+                <p className="text-sm text-gray-600">
+                  Trage o imagine aici sau apasă pentru a selecta una
+                </p>
                 {imageUrl && (
-                  <img src={imageUrl} alt="Previzualizare" className="mt-2 mx-auto max-h-40 object-contain rounded" />
+                  <img
+                    src={imageUrl}
+                    alt="Previzualizare"
+                    className="mt-2 mx-auto max-h-40 object-contain rounded"
+                  />
                 )}
               </div>
-              <textarea className="w-full border rounded p-2 min-h-[80px]" value={description} onChange={(e) => setDescription(e.target.value)} required placeholder="Descriere" />
-              <button type="submit" className="w-full bg-green-700 text-white py-2 rounded font-bold hover:bg-green-800 transition" disabled={addLoading || editLoading}>
-                {editProduct ? (editLoading ? "Se salvează..." : "Salvează modificările") : (addLoading ? "Se adaugă..." : "Adaugă produs")}
+              <textarea
+                className="w-full border rounded p-2 min-h-[80px]"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+                placeholder="Descriere"
+              />
+              <button
+                type="submit"
+                className="w-full bg-green-700 text-white py-2 rounded font-bold hover:bg-green-800 transition"
+                disabled={addLoading || editLoading}
+              >
+                {editProduct
+                  ? editLoading
+                    ? "Se salvează..."
+                    : "Salvează modificările"
+                  : addLoading
+                  ? "Se adaugă..."
+                  : "Adaugă produs"}
               </button>
             </form>
           </div>
@@ -276,14 +333,33 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.map((product) => (
-          <div key={product.id} className="bg-white border border-gray-200 rounded-xl shadow p-4 flex flex-col">
-            <img src={product.imageUrl} alt={product.title} className="h-40 object-contain rounded mb-4" />
+          <div
+            key={product.id}
+            className="bg-white border border-gray-200 rounded-xl shadow p-4 flex flex-col"
+          >
+            <img
+              src={product.imageUrl}
+              alt={product.title}
+              className="h-40 object-contain rounded mb-4"
+            />
             <h3 className="text-lg font-semibold mb-1">{product.title}</h3>
             <p className="text-green-700 font-bold mb-2">{product.price} RON</p>
-            <p className="text-sm text-gray-600 mb-4 line-clamp-3">{product.description}</p>
+            <p className="text-sm text-gray-600 mb-4 line-clamp-3">
+              {product.description}
+            </p>
             <div className="mt-auto flex gap-2">
-              <button className="px-3 py-1 bg-yellow-400 text-yellow-900 rounded hover:bg-yellow-500 transition text-sm w-full" onClick={() => handleEdit(product)}>Edit</button>
-              <button className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-sm w-full" onClick={() => handleDelete(product.id)}>Delete</button>
+              <button
+                className="px-3 py-1 bg-yellow-400 text-yellow-900 rounded hover:bg-yellow-500 transition text-sm w-full"
+                onClick={() => handleEdit(product)}
+              >
+                Edit
+              </button>
+              <button
+                className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-sm w-full"
+                onClick={() => handleDelete(product.id)}
+              >
+                Delete
+              </button>
             </div>
           </div>
         ))}

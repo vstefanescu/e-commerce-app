@@ -31,7 +31,7 @@ app.use("/api/products", productRoutes);
 app.use("/api", uploadRoute); // 👈 Adaugă ruta de upload
 
 // Servește imaginile din folderul uploads/
-app.use("/uploads", express.static(path.join(__dirname, "../uploads"))); // 👈 imagini disponibile public
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Test
 app.get("/api/hello", (_req, res) => {
