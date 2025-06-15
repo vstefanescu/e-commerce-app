@@ -2,8 +2,6 @@
 
 **Market** is a modern full-stack e-commerce app built with Node.js, React, PostgreSQL, and Tailwind CSS.
 
-![Market Screenshot](./frontend/public/market-preview.png)
-
 ## 🚀 Features
 
 ### 🧑‍💼 Authentication
