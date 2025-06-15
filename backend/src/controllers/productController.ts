@@ -3,18 +3,51 @@ import prisma from '../config/prisma';
 
 export const getAllProducts = async (req: Request, res: Response) => {
   try {
-    const products = await prisma.product.findMany();
-    res.json(products);
+    const { page, limit, search = "", minPrice, maxPrice } = req.query;
+
+    // Dacă NU există page sau limit => returnează toate produsele (folosit pe Home)
+    if (!page && !limit && !search && !minPrice && !maxPrice) {
+      const products = await prisma.product.findMany();
+      return res.json(products);
+    }
+
+    // Altfel, aplică paginare + filtre
+    const pageNumber = parseInt(page as string) || 1;
+    const limitNumber = parseInt(limit as string) || 6;
+    const skip = (pageNumber - 1) * limitNumber;
+
+    const filters: any = {};
+
+    if (search) {
+      filters.title = {
+        contains: search,
+        mode: "insensitive",
+      };
+    }
+
+    if (minPrice || maxPrice) {
+      filters.price = {};
+      if (minPrice) filters.price.gte = parseFloat(minPrice as string);
+      if (maxPrice) filters.price.lte = parseFloat(maxPrice as string);
+    }
+
+    const [products, total] = await Promise.all([
+      prisma.product.findMany({
+        where: filters,
+        skip,
+        take: limitNumber,
+      }),
+      prisma.product.count({ where: filters }),
+    ]);
+
+    res.json({ products, total });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch products' });
+    console.error("Eroare la getAllProducts:", error);
+    res.status(500).json({ error: "Failed to fetch products" });
   }
 };
 
-
-export const createProduct = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const createProduct = async (req: Request, res: Response): Promise<void> => {
   try {
     const { title, description, price, imageUrl } = req.body;
 
@@ -38,10 +71,7 @@ export const createProduct = async (
   }
 };
 
-export const deleteProduct = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const deleteProduct = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const productId = parseInt(id);
@@ -65,10 +95,7 @@ export const deleteProduct = async (
   }
 };
 
-export const updateProduct = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const updateProduct = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const productId = parseInt(id);
@@ -86,7 +113,7 @@ export const updateProduct = async (
 
     if (!title || !description || !price || !imageUrl) {
       res.status(400).json({ error: 'Missing fields' });
-      return
+      return;
     }
 
     const updatedProduct = await prisma.product.update({
@@ -99,13 +126,13 @@ export const updateProduct = async (
       },
     });
 
-    res.json(updateProduct);
+    res.json(updatedProduct);
   } catch (error) {
     res.status(500).json({ error: 'Failed to update product' });
   }
 };
 
-const getProductById = async (req: Request, res: Response) => {
+export const getProductById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const productId = parseInt(id);
@@ -124,7 +151,3 @@ const getProductById = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to fetch product' });
   }
 };
-
-export { getProductById };
-
-
