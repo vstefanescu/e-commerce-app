@@ -32,7 +32,7 @@
 
 ```bash
 # Clone repo
-git clone https://github.com/YOUR_USERNAME/market.git
+git clone https://github.com/YOUR_USERNAME/me-commerce-app.git
 cd market
 
 # Backend
