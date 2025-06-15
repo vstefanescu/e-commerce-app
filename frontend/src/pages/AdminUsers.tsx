@@ -93,44 +93,82 @@ const AdminUsers = ({
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-8 bg-white rounded-xl shadow-lg">
-      <h1 className="text-3xl font-bold mb-6 text-indigo-700">
+    <div className="max-w-5xl mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6 text-indigo-700 text-center">
         Panou Administrare Utilizatori
       </h1>
 
-      <table className="min-w-full table-auto border-collapse border border-gray-200">
-        <thead>
-          <tr className="bg-indigo-100 text-indigo-700">
-            <th className="border border-gray-300 p-3 text-left">Nume</th>
-            <th className="border border-gray-300 p-3 text-left">Email</th>
-            <th className="border border-gray-300 p-3 text-left">Rol</th>
-            <th className="border border-gray-300 p-3 text-center">Acțiuni</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((u) => (
-            <tr key={u.id} className="hover:bg-indigo-50">
-              <td className="border border-gray-300 p-3">{u.name}</td>
-              <td className="border border-gray-300 p-3">{u.email}</td>
-              <td className="border border-gray-300 p-3 capitalize">{u.role}</td>
-              <td className="border border-gray-300 p-3 flex justify-center gap-3">
-                <button
-                  className="px-3 py-1 bg-yellow-400 text-yellow-900 rounded hover:bg-yellow-500 transition"
-                  onClick={() => handleEdit(u.id)}
-                >
-                  Edit
-                </button>
-                <button
-                  className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
-                  onClick={() => handleDelete(u.id)}
-                >
-                  Delete
-                </button>
-              </td>
+      {/* Tabel clasic pe ecrane mari */}
+      <div className="hidden md:block bg-white rounded-xl shadow-lg overflow-x-auto">
+        <table className="w-full table-auto border-collapse border border-gray-200">
+          <thead>
+            <tr className="bg-indigo-100 text-indigo-700">
+              <th className="border border-gray-300 p-3 text-left">Nume</th>
+              <th className="border border-gray-300 p-3 text-left">Email</th>
+              <th className="border border-gray-300 p-3 text-left">Rol</th>
+              <th className="border border-gray-300 p-3 text-center">Acțiuni</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {users.map((u) => (
+              <tr key={u.id} className="hover:bg-indigo-50">
+                <td className="border border-gray-300 p-3">{u.name}</td>
+                <td className="border border-gray-300 p-3">{u.email}</td>
+                <td className="border border-gray-300 p-3 capitalize">{u.role}</td>
+                <td className="border border-gray-300 p-3 flex justify-center gap-3">
+                  <button
+                    className="px-3 py-1 bg-yellow-400 text-yellow-900 rounded hover:bg-yellow-500 transition"
+                    onClick={() => handleEdit(u.id)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
+                    onClick={() => handleDelete(u.id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Versiune card pe mobil */}
+      <div className="md:hidden space-y-4">
+        {users.map((u) => (
+          <div
+            key={u.id}
+            className="bg-white rounded-xl shadow-md p-4 border border-gray-200"
+          >
+            <div className="mb-2">
+              <span className="font-semibold">Nume:</span> {u.name}
+            </div>
+            <div className="mb-2">
+              <span className="font-semibold">Email:</span> {u.email}
+            </div>
+            <div className="mb-4">
+              <span className="font-semibold">Rol:</span>{" "}
+              <span className="capitalize">{u.role}</span>
+            </div>
+            <div className="flex justify-end gap-3">
+              <button
+                className="px-3 py-1 bg-yellow-400 text-yellow-900 rounded hover:bg-yellow-500 transition"
+                onClick={() => handleEdit(u.id)}
+              >
+                Edit
+              </button>
+              <button
+                className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
+                onClick={() => handleDelete(u.id)}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

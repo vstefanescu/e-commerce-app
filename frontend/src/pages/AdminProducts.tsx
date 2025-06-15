@@ -176,8 +176,9 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
   if (error) return <div className="p-8 text-center text-red-600">{error}</div>;
 
   return (
-    <div className="max-w-5xl mx-auto p-8 bg-white rounded-xl shadow-lg">
+    <div className="max-w-6xl mx-auto p-4 md:p-8 bg-white rounded-xl shadow-lg">
       <h1 className="text-3xl font-bold mb-6 text-green-700">Panou Administrare Produse</h1>
+
       <div className="mb-6 flex justify-end">
         <button
           className="bg-green-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-700 transition"
@@ -210,23 +211,14 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
             <h2 className="text-2xl font-semibold mb-6 text-center">
               {editProduct ? "Editează produs" : "Adaugă produs nou"}
             </h2>
-            <form onSubmit={editProduct ? handleEditProduct : handleAddProduct} className="space-y-4">
-              <div>
-                <label className="block mb-1 font-semibold">Titlu</label>
-                <input type="text" className="w-full border rounded p-2" value={title} onChange={(e) => setTitle(e.target.value)} required />
-              </div>
-              <div>
-                <label className="block mb-1 font-semibold">Preț (RON)</label>
-                <input type="number" className="w-full border rounded p-2" value={price} onChange={(e) => setPrice(e.target.value)} required min={0} step="any" />
-              </div>
-              <div>
-                <label className="block mb-1 font-semibold">Imagine (URL)</label>
-                <input type="text" className="w-full border rounded p-2" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} required />
-              </div>
-              <div>
-                <label className="block mb-1 font-semibold">Descriere</label>
-                <textarea className="w-full border rounded p-2 min-h-[80px]" value={description} onChange={(e) => setDescription(e.target.value)} required />
-              </div>
+            <form
+              onSubmit={editProduct ? handleEditProduct : handleAddProduct}
+              className="space-y-4"
+            >
+              <input type="text" className="w-full border rounded p-2" value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="Titlu" />
+              <input type="number" className="w-full border rounded p-2" value={price} onChange={(e) => setPrice(e.target.value)} required min={0} step="any" placeholder="Preț" />
+              <input type="text" className="w-full border rounded p-2" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} required placeholder="URL imagine" />
+              <textarea className="w-full border rounded p-2 min-h-[80px]" value={description} onChange={(e) => setDescription(e.target.value)} required placeholder="Descriere" />
               <button type="submit" className="w-full bg-green-700 text-white py-2 rounded font-bold hover:bg-green-800 transition" disabled={addLoading || editLoading}>
                 {editProduct ? (editLoading ? "Se salvează..." : "Salvează modificările") : (addLoading ? "Se adaugă..." : "Adaugă produs")}
               </button>
@@ -235,33 +227,21 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
         </div>
       )}
 
-      <table className="min-w-full table-auto border-collapse border border-gray-200">
-        <thead>
-          <tr className="bg-green-100 text-green-700">
-            <th className="border border-gray-300 p-3 text-left">Titlu</th>
-            <th className="border border-gray-300 p-3 text-left">Preț</th>
-            <th className="border border-gray-300 p-3 text-left">Imagine</th>
-            <th className="border border-gray-300 p-3 text-left">Descriere</th>
-            <th className="border border-gray-300 p-3 text-center">Acțiuni</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((product) => (
-            <tr key={product.id} className="hover:bg-green-50">
-              <td className="border border-gray-300 p-3">{product.title}</td>
-              <td className="border border-gray-300 p-3">{product.price} RON</td>
-              <td className="border border-gray-300 p-3">
-                <img src={product.imageUrl} alt={product.title} className="w-16 h-16 object-cover rounded" />
-              </td>
-              <td className="border border-gray-300 p-3 max-w-xs overflow-auto">{product.description}</td>
-              <td className="border border-gray-300 p-3 flex gap-2 justify-center">
-                <button className="px-3 py-1 bg-yellow-400 text-yellow-900 rounded hover:bg-yellow-500 transition" onClick={() => handleEdit(product)}>Edit</button>
-                <button className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition" onClick={() => handleDelete(product.id)}>Delete</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {/* Grid view */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {products.map((product) => (
+          <div key={product.id} className="bg-white border border-gray-200 rounded-xl shadow p-4 flex flex-col">
+            <img src={product.imageUrl} alt={product.title} className="h-40 object-contain rounded mb-4" />
+            <h3 className="text-lg font-semibold mb-1">{product.title}</h3>
+            <p className="text-green-700 font-bold mb-2">{product.price} RON</p>
+            <p className="text-sm text-gray-600 mb-4 line-clamp-3">{product.description}</p>
+            <div className="mt-auto flex gap-2">
+              <button className="px-3 py-1 bg-yellow-400 text-yellow-900 rounded hover:bg-yellow-500 transition text-sm w-full" onClick={() => handleEdit(product)}>Edit</button>
+              <button className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-sm w-full" onClick={() => handleDelete(product.id)}>Delete</button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

@@ -27,8 +27,8 @@ const Cart = ({ addToast }: CartProps) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center">Coșul tău de cumpărături</h1>
+    <div className="max-w-4xl mx-auto p-4 sm:p-6">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center">Coșul tău de cumpărături</h1>
 
       {products.length === 0 ? (
         <div className="text-center text-gray-500 text-lg mt-20">
@@ -42,19 +42,19 @@ const Cart = ({ addToast }: CartProps) => {
         </div>
       ) : (
         <>
-          <ul className="space-y-6">
+          <ul className="space-y-4">
             {products.map((prod) => (
               <li
                 key={prod.id}
-                className="flex items-center justify-between bg-white rounded-xl shadow-md p-4"
+                className="flex flex-col sm:flex-row items-center justify-between bg-white rounded-xl shadow-md p-4 gap-4"
               >
-                <div className="flex items-center gap-5">
+                <div className="flex flex-col sm:flex-row items-center sm:gap-5 w-full">
                   <img
                     src={prod.imageUrl}
                     alt={prod.title}
-                    className="w-20 h-20 rounded-lg object-cover"
+                    className="w-24 h-24 rounded-lg object-cover"
                   />
-                  <div>
+                  <div className="flex-1 mt-3 sm:mt-0 text-center sm:text-left">
                     <h3 className="font-semibold text-lg">{prod.title}</h3>
                     <p className="text-gray-600 mt-1 text-sm">
                       {prod.price} RON x {prod.quantity}
@@ -63,7 +63,7 @@ const Cart = ({ addToast }: CartProps) => {
                 </div>
                 <button
                   onClick={() => handleRemove(prod.id)}
-                  className="text-red-600 font-semibold hover:text-red-700 transition"
+                  className="text-red-600 font-semibold hover:text-red-700 transition text-lg"
                   aria-label={`Elimină ${prod.title}`}
                 >
                   ✕
@@ -77,16 +77,16 @@ const Cart = ({ addToast }: CartProps) => {
             <span>{total.toFixed(2)} RON</span>
           </div>
 
-          <div className="flex justify-between mt-8">
+          <div className="flex flex-col sm:flex-row justify-between gap-4 mt-8">
             <button
               onClick={handleClearCart}
-              className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition font-semibold"
+              className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition font-semibold w-full sm:w-auto"
             >
               Golește coșul
             </button>
             <Link
               to="/checkout"
-              className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition font-semibold"
+              className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition font-semibold w-full sm:w-auto text-center"
             >
               Continuă spre Checkout
             </Link>

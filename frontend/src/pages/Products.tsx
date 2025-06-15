@@ -43,46 +43,47 @@ function Products({ addToast }: ProductsProps) {
     addToast("Produsul a fost adăugat în coș!");
   };
 
-  if (loading) return <div className="p-8">Loading...</div>;
+  if (loading)
+    return (
+      <div className="p-8 text-center text-lg font-semibold text-gray-500">
+        Se încarcă produsele...
+      </div>
+    );
 
   return (
-    <div className="p-8">
-      <h2 className="text-2xl font-bold mb-4">Produse</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="p-4 sm:p-6 md:p-8">
+      <h2 className="text-3xl font-bold text-center text-indigo-700 mb-8">Produsele Noastre</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.map((product) => (
           <div
             key={product.id}
-            className="bg-white rounded-lg shadow-md p-4 flex flex-col"
+            className="bg-white rounded-2xl shadow hover:shadow-lg transition duration-300 p-4 flex flex-col"
           >
-            {/* Container imagine */}
-            <div className="relative overflow-hidden rounded-t-lg h-64 mb-4">
+            <div className="overflow-hidden rounded-xl h-48 flex items-center justify-center bg-gray-100 mb-4">
               <img
                 src={product.imageUrl}
                 alt={product.title}
-                className="w-full h-full object-contain transform hover:scale-105 transition-transform duration-300"
+                className="max-h-full max-w-full object-contain"
               />
             </div>
 
-            {/* Titlu și preț */}
-            <h3 className="text-lg font-semibold mb-2">{product.title}</h3>
-            <p className="text-indigo-600 font-bold text-xl mb-2">{product.price} RON</p>
+            <h3 className="text-xl font-semibold text-gray-800 mb-1">{product.title}</h3>
+            <p className="text-indigo-600 font-bold text-lg mb-2">{product.price} RON</p>
 
-            {/* Descriere - scrollabilă, înălțime fixă */}
-            <p className="text-sm text-gray-700 mb-4 overflow-y-auto max-h-24">
+            <p className="text-gray-600 text-sm mb-4 line-clamp-4">
               {product.description}
             </p>
 
-            {/* Butoane */}
-            <div className="mt-auto flex gap-2">
+            <div className="mt-auto flex flex-col sm:flex-row gap-2">
               <Link
                 to={`/products/${product.id}`}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition flex-grow text-center"
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg text-center hover:bg-blue-700 transition w-full"
               >
                 Vezi detalii
               </Link>
               <button
                 onClick={() => handleAddToCart(product)}
-                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition flex-grow"
+                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition w-full"
               >
                 Adaugă în coș
               </button>

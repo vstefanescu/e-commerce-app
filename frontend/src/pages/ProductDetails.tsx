@@ -16,7 +16,7 @@ type ProductDetailsProps = {
   addToast: (message: string) => void;
 };
 
-function ProductDetails({ addToast }: ProductDetailsProps) {
+const ProductDetails = ({ addToast }: ProductDetailsProps) => {
   const { id } = useParams();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -28,6 +28,7 @@ function ProductDetails({ addToast }: ProductDetailsProps) {
       navigate("/products");
       return;
     }
+
     api<Product>(`/api/products/${id}`, "GET")
       .then((data) => {
         setProduct(data);
@@ -35,7 +36,7 @@ function ProductDetails({ addToast }: ProductDetailsProps) {
       })
       .catch(() => {
         setLoading(false);
-        navigate("/products"); // daca produsul nu exista, redirect la lista
+        navigate("/products");
       });
   }, [id, navigate]);
 
@@ -53,43 +54,66 @@ function ProductDetails({ addToast }: ProductDetailsProps) {
     addToast("Produsul a fost adăugat în coș!");
   };
 
-  if (loading) return <div className="p-8 text-center">Se încarcă produsul...</div>;
+  if (loading)
+    return (
+      <div className="p-8 text-center text-lg text-gray-600">Se încarcă produsul...</div>
+    );
 
-  if (!product) return null;
+  if (!product)
+    return (
+      <div className="p-8 text-center text-red-600">
+        Produsul nu a fost găsit.
+      </div>
+    );
 
   return (
-    <div className="max-w-5xl mx-auto p-8 flex flex-col md:flex-row gap-10">
-      {/* Imagine */}
-      <div className="md:w-1/2 flex justify-center items-center overflow-hidden rounded-lg shadow-lg">
-        <img
-          src={product.imageUrl}
-          alt={product.title}
-          className="object-contain w-full h-96 hover:scale-105 transition-transform duration-300"
-        />
+    <div className="max-w-6xl mx-auto px-4 py-10 flex flex-col md:flex-row gap-10">
+      {/* Imagine produs */}
+      <div className="md:w-1/2 flex flex-col items-start">
+        {/* Breadcrumb */}
+        <nav className="text-sm text-indigo-600 mb-4">
+          <Link to="/products" className="hover:underline">
+            Produse
+          </Link>{" "}
+          / <span className="text-gray-700">{product.title}</span>
+        </nav>
+
+        <div className="w-full h-[300px] sm:h-[400px] md:h-[500px] bg-white rounded-xl shadow-md overflow-hidden flex justify-center items-center">
+          <img
+            src={product.imageUrl || "/placeholder.jpg"}
+            alt={product.title}
+            className="object-contain w-full h-full transform hover:scale-105 transition-transform duration-300"
+          />
+        </div>
       </div>
 
       {/* Detalii produs */}
-      <div className="md:w-1/2 flex flex-col">
-        <h1 className="text-4xl font-extrabold mb-4">{product.title}</h1>
-        <p className="text-3xl font-bold text-indigo-600 mb-6">{product.price} RON</p>
-        <p className="text-gray-700 mb-8 whitespace-pre-line">{product.description}</p>
+      <div className="md:w-1/2 flex flex-col justify-center">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">{product.title}</h1>
+        <p className="text-xl sm:text-2xl text-indigo-600 font-semibold mb-6">
+          {product.price} RON
+        </p>
+        <p className="text-gray-700 mb-8 whitespace-pre-line text-sm sm:text-base">
+          {product.description}
+        </p>
 
         <button
           onClick={handleAddToCart}
-          className="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 transition font-semibold mb-6 max-w-max"
+          aria-label={`Adaugă ${product.title} în coș`}
+          className="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 transition font-semibold w-full sm:w-max mb-4"
         >
           Adaugă în coș
         </button>
 
         <Link
           to="/products"
-          className="text-indigo-600 hover:underline font-medium max-w-max"
+          className="text-indigo-600 hover:underline font-medium text-sm sm:text-base"
         >
           &larr; Înapoi la produse
         </Link>
       </div>
     </div>
   );
-}
+};
 
 export default ProductDetails;

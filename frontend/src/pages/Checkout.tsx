@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { clearCart } from "../features/cartSlice";
+import type { RootState } from "../store";
 
 type CheckoutProps = {
   addToast: (msg: string) => void;
@@ -7,6 +10,8 @@ type CheckoutProps = {
 
 const Checkout = ({ addToast }: CheckoutProps) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const cartItems = useSelector((state: RootState) => state.cart.products);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -17,18 +22,12 @@ const Checkout = ({ addToast }: CheckoutProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Aici am putea verifica validarea dacă vrem mai strict
-
     setLoading(true);
 
     try {
-      // TODO: Apelează API-ul tău pentru a salva comanda și/sau trimite email
-      // Exemplu:
-      // await api.post('/api/orders', { name, email, address, phone, paymentMethod });
-
-      // Pentru demo, simulăm succes
+      // Simulăm procesarea comenzii
       setTimeout(() => {
+        dispatch(clearCart()); // Golim coșul
         setLoading(false);
         addToast("Comanda ta a fost plasată cu succes!");
         navigate("/");
@@ -45,6 +44,21 @@ const Checkout = ({ addToast }: CheckoutProps) => {
         <h2 className="text-3xl font-semibold mb-6 text-center text-indigo-700">
           Finalizează comanda
         </h2>
+
+        {/* Rezumat produse */}
+        {cartItems.length > 0 && (
+          <div className="mb-6 border border-gray-300 rounded-lg p-4 bg-gray-50">
+            <h3 className="font-semibold mb-2">Produsele tale:</h3>
+            <ul className="text-sm space-y-1">
+              {cartItems.map((item) => (
+                <li key={item.id}>
+                  {item.title} — {item.quantity} x {item.price} RON
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-5">
           <input
             type="text"
@@ -94,7 +108,9 @@ const Checkout = ({ addToast }: CheckoutProps) => {
             type="submit"
             disabled={loading}
             className={`w-full py-3 rounded-md font-semibold text-white ${
-              loading ? "bg-indigo-300 cursor-not-allowed" : "bg-indigo-600 hover:bg-indigo-700"
+              loading
+                ? "bg-indigo-300 cursor-not-allowed"
+                : "bg-indigo-600 hover:bg-indigo-700"
             } transition`}
           >
             {loading ? "Se procesează..." : "Plasează comanda"}

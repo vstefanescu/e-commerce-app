@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { ShieldCheck, ShoppingCart } from "lucide-react";
 import type { User } from "../types/User";
 
 type AdminDashboardProps = {
@@ -25,20 +26,26 @@ const AdminDashboard = ({ isLoggedIn, user, authLoaded }: AdminDashboardProps) =
   }
 
   return (
-    <div className="max-w-3xl mx-auto py-16 px-6">
-      <h1 className="text-4xl font-bold text-center mb-12">Admin Dashboard</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div className="max-w-4xl mx-auto py-16 px-4">
+      <h1 className="text-4xl font-extrabold text-center mb-12 text-indigo-700">
+        Panou Administrator
+      </h1>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
         <Link
           to="/admin/users"
-          className="block bg-indigo-100 hover:bg-indigo-200 rounded-2xl shadow-xl p-12 text-center transition text-2xl font-semibold"
+          className="flex flex-col items-center justify-center bg-indigo-100 hover:bg-indigo-200 rounded-2xl shadow-md p-8 transition text-center"
         >
-          Gestiune Utilizatori
+          <ShieldCheck className="w-12 h-12 text-indigo-600 mb-4" />
+          <span className="text-xl font-semibold text-indigo-800">Gestiune Utilizatori</span>
         </Link>
+
         <Link
           to="/admin/products"
-          className="block bg-green-100 hover:bg-green-200 rounded-2xl shadow-xl p-12 text-center transition text-2xl font-semibold"
+          className="flex flex-col items-center justify-center bg-green-100 hover:bg-green-200 rounded-2xl shadow-md p-8 transition text-center"
         >
-          Gestiune Produse
+          <ShoppingCart className="w-12 h-12 text-green-600 mb-4" />
+          <span className="text-xl font-semibold text-green-800">Gestiune Produse</span>
         </Link>
       </div>
     </div>
