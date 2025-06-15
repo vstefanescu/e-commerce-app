@@ -2,13 +2,18 @@ import { Request, Response } from "express";
 import prisma from "../config/prisma";
 
 // GET TOATE PRODUSELE
-export const getAllProducts = async (req: Request, res: Response): Promise<void> => {
+export const getAllProducts = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { page, limit, search = "", minPrice, maxPrice } = req.query;
 
     if (!page && !limit && !search && !minPrice && !maxPrice) {
-      const products = await prisma.product.findMany();
-      res.json(products); // ✅ fără return
+      const products = await prisma.product.findMany({
+        orderBy: { createdAt: "desc" },
+      });
+      res.json(products);
       return;
     }
 
@@ -48,7 +53,10 @@ export const getAllProducts = async (req: Request, res: Response): Promise<void>
 };
 
 // GET PRODUS DUPĂ ID
-export const getProductById = async (req: Request, res: Response): Promise<void> => {
+export const getProductById = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { id } = req.params;
     const productId = parseInt(id);
@@ -69,7 +77,10 @@ export const getProductById = async (req: Request, res: Response): Promise<void>
 };
 
 // POST CREEAZĂ PRODUS
-export const createProduct = async (req: Request, res: Response): Promise<void> => {
+export const createProduct = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { title, description, price, imageUrl } = req.body;
 
@@ -94,7 +105,10 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
 };
 
 // PUT UPDATE PRODUS
-export const updateProduct = async (req: Request, res: Response): Promise<void> => {
+export const updateProduct = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { id } = req.params;
     const productId = parseInt(id);
@@ -132,7 +146,10 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
 };
 
 // DELETE PRODUS
-export const deleteProduct = async (req: Request, res: Response): Promise<void> => {
+export const deleteProduct = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { id } = req.params;
     const productId = parseInt(id);
