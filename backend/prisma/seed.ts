@@ -39,7 +39,7 @@ async function main() {
   });
 
   console.log(
-    "✅ Admin user created with email: admin@gmail.com / password: zapacit123"
+    "✅ Admin user created with email: admin@gmail.com / password: admin"
   );
 }
 

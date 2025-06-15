@@ -1,12 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../store";
+import type { User } from "../types/User";
 
 type NavbarProps = {
   isLoggedIn: boolean;
-  user: { role?: string; email?: string; name?: string } | null;
+  user: User | null;
   setIsLoggedIn: (value: boolean) => void;
-  setUser: (user: { role?: string; email?: string; name?: string } | null) => void;
+  setUser: (user: User | null) => void;
 };
 
 export default function Navbar({ isLoggedIn, user, setIsLoggedIn, setUser }: NavbarProps) {
@@ -23,7 +24,7 @@ export default function Navbar({ isLoggedIn, user, setIsLoggedIn, setUser }: Nav
   };
 
   return (
-    <nav className="bg-indigo-700 text-white px-6 py-4 flex justify-between items-center shadow-md">
+    <nav className="sticky top-0 z-50 bg-indigo-700 text-white px-6 py-4 flex justify-between items-center shadow-md">
       <div className="text-2xl font-extrabold tracking-tight">
         <Link to="/" className="hover:text-indigo-300 transition">
           Market
@@ -52,10 +53,10 @@ export default function Navbar({ isLoggedIn, user, setIsLoggedIn, setUser }: Nav
 
             {user?.role === "admin" && (
               <Link
-                to="/admin/users"
+                to="/admin"
                 className="text-yellow-300 hover:text-yellow-400 transition font-semibold"
               >
-                Admin Panel
+                Admin Dashboard
               </Link>
             )}
 

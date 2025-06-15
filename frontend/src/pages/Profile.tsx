@@ -1,25 +1,19 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
-
-interface User {
-  id: number;
-  name?: string;
-  email?: string;
-  role?: string;
-}
+import type { User } from "../types/User";
 
 type ProfileProps = {
   setIsLoggedIn: (v: boolean) => void;
   setUser: (u: User | null) => void;
-  addToast: (msg: string) => void; // toast pentru notificări
+  addToast: (msg: string) => void;
 };
 
 function getInitials(name?: string, email?: string) {
   if (name && name.length > 0) {
     return name
       .split(" ")
-      .map(word => word[0]?.toUpperCase() || "")
+      .map((word) => word[0]?.toUpperCase() || "")
       .join("")
       .slice(0, 2);
   }
@@ -34,63 +28,75 @@ const Profile = ({ setIsLoggedIn, setUser, addToast }: ProfileProps) => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+
     if (!token) {
-      navigate("/login");
+      setError("Lipsă token. Nu ești autentificat.");
       return;
     }
 
     const fetchProfile = async () => {
       try {
         const data = await api<{ message: string; user: User }>(
-          "/api/profile",
+          "/api/user/profile",
           "GET",
           undefined,
           token
         );
         setUserProfile(data.user);
-        // console.log("PROFILE DATA", data.user);
-      } catch {
-        setError("Profile fetch failed");
-        navigate("/login");
+      } catch (err) {
+        console.error("❌ Eroare la fetchProfile:", err);
+        setError("Token invalid sau profil inexistent.");
       }
     };
 
     fetchProfile();
-  }, [navigate]);
+  }, []);
 
   if (error)
-    return <div className="text-red-600 text-center mt-8">{error}</div>;
-  if (!user) return <div className="text-center mt-8">Loading profile...</div>;
+    return (
+      <div className="text-red-600 text-center mt-12 text-lg font-semibold">
+        {error}
+      </div>
+    );
+
+  if (!user)
+    return (
+      <div className="text-center mt-12 text-gray-600 text-lg font-medium">
+        Se încarcă profilul...
+      </div>
+    );
 
   return (
-    <div className="flex justify-center items-center min-h-[60vh]">
-      <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md flex flex-col items-center">
-        {/* Avatar */}
-        <div className="w-24 h-24 rounded-full bg-indigo-100 flex items-center justify-center mb-6 text-3xl text-indigo-600 font-bold">
+    <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 px-4">
+      <div className="bg-white rounded-3xl shadow-xl p-10 max-w-sm w-full flex flex-col items-center">
+        <div className="w-28 h-28 rounded-full bg-indigo-100 flex items-center justify-center mb-8 text-4xl text-indigo-700 font-extrabold shadow-md">
           {getInitials(user.name, user.email)}
         </div>
-        {/* Info */}
-        <div className="mb-4 text-center">
-          <div className="text-xl font-bold">{user.name || "Nume necunoscut"}</div>
-          <div className="text-gray-600">{user.email}</div>
-          <div className="mt-2">
-            <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold
-              ${user.role === "admin" ? "bg-yellow-200 text-yellow-800" : "bg-gray-200 text-gray-700"}`}>
-              {user.role === "admin" ? "Administrator" : "User"}
-            </span>
-          </div>
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-900">
+            {user.name || "Nume necunoscut"}
+          </h2>
+          <p className="text-gray-600 mt-1">{user.email}</p>
+          <span
+            className={`inline-block mt-3 px-4 py-1 rounded-full text-sm font-semibold ${
+              user.role === "admin"
+                ? "bg-yellow-300 text-yellow-900"
+                : "bg-gray-300 text-gray-700"
+            }`}
+          >
+            {user.role === "admin" ? "Administrator" : "User"}
+          </span>
         </div>
-        {/* Buton logout */}
         <button
           onClick={() => {
             localStorage.removeItem("token");
             localStorage.removeItem("user");
             setIsLoggedIn(false);
             setUser(null);
-            addToast("Te-ai delogat!");
+            addToast("Te-ai delogat cu succes!");
             navigate("/login");
           }}
-          className="mt-6 bg-red-600 text-white py-2 px-6 rounded-xl hover:bg-red-700 transition"
+          className="mt-4 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-8 rounded-full shadow-md transition"
         >
           Logout
         </button>

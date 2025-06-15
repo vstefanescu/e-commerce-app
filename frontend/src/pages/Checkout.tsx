@@ -1,79 +1,106 @@
-import { useSelector, useDispatch } from "react-redux";
-import type { RootState } from "../store";
-import { clearCart } from "../features/cartSlice";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type CheckoutProps = {
   addToast: (msg: string) => void;
 };
 
 const Checkout = ({ addToast }: CheckoutProps) => {
-  const products = useSelector((state: RootState) => state.cart.products);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const total = products.reduce((acc, p) => acc + p.price * p.quantity, 0);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [phone, setPhone] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("card");
+  const [loading, setLoading] = useState(false);
 
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    address: "",
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    dispatch(clearCart());
-    addToast("Comanda a fost trimisă cu succes!");
-    navigate("/products");
+    // Aici am putea verifica validarea dacă vrem mai strict
+
+    setLoading(true);
+
+    try {
+      // TODO: Apelează API-ul tău pentru a salva comanda și/sau trimite email
+      // Exemplu:
+      // await api.post('/api/orders', { name, email, address, phone, paymentMethod });
+
+      // Pentru demo, simulăm succes
+      setTimeout(() => {
+        setLoading(false);
+        addToast("Comanda ta a fost plasată cu succes!");
+        navigate("/");
+      }, 1500);
+    } catch (error) {
+      setLoading(false);
+      addToast("Eroare la plasarea comenzii. Încearcă din nou.");
+    }
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">Finalizare comandă</h1>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          placeholder="Nume complet"
-          className="w-full border rounded p-2"
-        />
-        <input
-          name="email"
-          type="email"
-          value={form.email}
-          onChange={handleChange}
-          placeholder="Email"
-          className="w-full border rounded p-2"
-        />
-        <textarea
-          name="address"
-          value={form.address}
-          onChange={handleChange}
-          placeholder="Adresă de livrare"
-          className="w-full border rounded p-2"
-          rows={3}
-        />
-
-        <div className="flex justify-between font-bold text-lg">
-          <span>Total:</span>
-          <span>{total.toFixed(2)} RON</span>
-        </div>
-
-        <button
-          type="submit"
-          className="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-        >
-          Trimite comanda
-        </button>
-      </form>
+    <div className="flex justify-center items-center min-h-[75vh] px-4">
+      <div className="max-w-lg w-full bg-white p-8 rounded-xl shadow-lg">
+        <h2 className="text-3xl font-semibold mb-6 text-center text-indigo-700">
+          Finalizează comanda
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <input
+            type="text"
+            placeholder="Nume complet"
+            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <textarea
+            placeholder="Adresa livrare"
+            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+            rows={3}
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            required
+          />
+          <input
+            type="tel"
+            placeholder="Număr telefon"
+            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            required
+          />
+          <div>
+            <label className="font-semibold mb-2 block">Metodă plată:</label>
+            <select
+              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              value={paymentMethod}
+              onChange={(e) => setPaymentMethod(e.target.value)}
+            >
+              <option value="card">Card bancar</option>
+              <option value="cash">Cash la livrare</option>
+              <option value="paypal">PayPal</option>
+            </select>
+          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full py-3 rounded-md font-semibold text-white ${
+              loading ? "bg-indigo-300 cursor-not-allowed" : "bg-indigo-600 hover:bg-indigo-700"
+            } transition`}
+          >
+            {loading ? "Se procesează..." : "Plasează comanda"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

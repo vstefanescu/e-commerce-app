@@ -23,7 +23,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
+    <div className="max-w-7xl mx-auto px-6 py-8">
       {/* Banner principal */}
       <section className="bg-gradient-to-r from-indigo-200 via-white to-indigo-200 rounded-lg p-12 mb-12 shadow-lg text-center">
         <h1 className="text-5xl font-extrabold text-indigo-800 mb-4">

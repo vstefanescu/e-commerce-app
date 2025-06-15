@@ -5,6 +5,7 @@ import cors from "cors";
 import productRoutes from "./routes/productRoutes";
 import authroutes from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
+import adminRoutes from "./routes/adminRoutes";
 
 dotenv.config();
 const app = express();
@@ -17,8 +18,10 @@ app.use(
 );
 
 app.use(express.json());
+
 app.use("/api/auth", authroutes);
-app.use("/api", userRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/admin", adminRoutes);     // ex: GET /api/admin/users, DELETE /api/admin/users/:id
 app.use("/api/products", productRoutes);
 
 app.get("/api/hello", (req, res) => {

@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || "";
 
 export async function api<T>(
   url: string,
@@ -17,10 +17,23 @@ export async function api<T>(
   });
 
   if (!res.ok) {
-    const errorBody = await res.text().catch(() => "Unknown error");
-    console.error(`❌ API error on ${method} ${fullUrl}:`, errorBody);
-    throw new Error("API error");
+    try {
+      const errorJson = await res.json();
+      console.error(`❌ API error on ${method} ${fullUrl}:`, errorJson);
+      throw new Error(errorJson.message || "A apărut o eroare.");
+    } catch {
+      const text = await res.text().catch(() => "Eroare necunoscută");
+      console.error(
+        `❌ API error (text fallback) on ${method} ${fullUrl}:`,
+        text
+      );
+      throw new Error("A apărut o eroare.");
+    }
   }
 
-  return res.json();
+  try {
+    return await res.json();
+  } catch {
+    return {} as T;
+  }
 }

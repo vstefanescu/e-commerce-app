@@ -1,23 +1,21 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import path from 'path'; // ← adaugă importul ăsta
+import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
-  css: {
-    postcss: './postcss.config.js',
-  },
   server: {
     proxy: {
       '/api': {
         target: 'http://localhost:5000',
         changeOrigin: true,
+        secure: false,
       },
     },
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'), // ← Asta e esențial!
+      '@': path.resolve(__dirname, './src'),
     },
   },
 });

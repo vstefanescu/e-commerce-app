@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -8,46 +8,60 @@ import {
 
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
-import Products from "./pages/Products";
-import ProductDetails from "./pages/ProductDetails";
-import Cart from "./pages/Cart";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
-import AdminPanel from "./pages/AdminPanel";
-import NotAuthorized from "./pages/NotAuthorized";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminUsers from "./pages/AdminUsers";
+import AdminProducts from "./pages/AdminProducts"; // <-- ADĂUGAT
+import UserEdit from "./pages/UserEdit";
+import Products from "./pages/Products";
+import ProductDetails from "./pages/ProductDetails";
+import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
-import ToastList from "./components/ToastList";
-
-type Toast = {
-  id: number;
-  message: string;
-};
+import NotAuthorized from "./pages/NotAuthorized";
+import NotFound from "./pages/NotFound";
+import type { User } from "./types/User";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState<{ role?: string; email?: string; name?: string } | null>(null);
-  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [toasts, setToasts] = useState<string[]>([]);
+  const [authLoaded, setAuthLoaded] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const storedUser = localStorage.getItem("user");
-    setIsLoggedIn(!!token);
-    setUser(storedUser ? JSON.parse(storedUser) : null);
+    const userData = localStorage.getItem("user");
+    if (token && userData) {
+      try {
+        const parsed = JSON.parse(userData) as User;
+        setIsLoggedIn(true);
+        setUser(parsed);
+      } catch {
+        localStorage.removeItem("user");
+        setIsLoggedIn(false);
+        setUser(null);
+      }
+    }
+    setAuthLoaded(true);
   }, []);
 
-  const addToast = (message: string) => {
-    setToasts((prev) => {
-      if (prev.length >= 5) {
-        return [...prev.slice(1), { id: Date.now() + Math.random(), message }];
-      }
-      return [...prev, { id: Date.now() + Math.random(), message }];
-    });
+  const addToast = (msg: string) => {
+    setToasts((prev) => [...prev, msg]);
+    setTimeout(() => {
+      setToasts((prev) => prev.slice(1));
+    }, 3000);
   };
 
-  const removeToast = (id: number) => {
-    setToasts((prev) => prev.filter((t) => t.id !== id));
-  };
+  if (!authLoaded) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <span className="text-indigo-600 font-bold text-xl">
+          Se încarcă aplicația...
+        </span>
+      </div>
+    );
+  }
 
   return (
     <Router>
@@ -57,37 +71,106 @@ function App() {
         setIsLoggedIn={setIsLoggedIn}
         setUser={setUser}
       />
-
       <Routes>
-        {/* Home nu primește props deoarece nu le folosește */}
         <Route path="/" element={<Home />} />
-        <Route path="/products" element={<Products addToast={addToast} />} />
-        <Route path="/products/:id" element={<ProductDetails addToast={addToast} />} />
-        <Route path="/cart" element={<Cart addToast={addToast} />} />
-        <Route path="/checkout" element={<Checkout addToast={addToast} />} />
+
         <Route
           path="/login"
           element={
             isLoggedIn ? (
-              <Navigate to="/profile" replace />
+              <Navigate to="/" replace />
             ) : (
-              <Login setIsLoggedIn={setIsLoggedIn} setUser={setUser} addToast={addToast} />
+              <Login
+                setIsLoggedIn={setIsLoggedIn}
+                setUser={setUser}
+                addToast={addToast}
+              />
             )
           }
         />
+
         <Route
           path="/register"
-          element={isLoggedIn ? <Navigate to="/profile" replace /> : <Register addToast={addToast} />}
+          element={
+            isLoggedIn ? (
+              <Navigate to="/" replace />
+            ) : (
+              <Register
+                setIsLoggedIn={setIsLoggedIn}
+                setUser={setUser}
+                addToast={addToast}
+              />
+            )
+          }
         />
+
         <Route
           path="/profile"
-          element={<Profile setIsLoggedIn={setIsLoggedIn} setUser={setUser} addToast={addToast} />}
+          element={
+            <Profile
+              setIsLoggedIn={setIsLoggedIn}
+              setUser={setUser}
+              addToast={addToast}
+            />
+          }
         />
-        <Route path="/admin/users" element={<AdminPanel isLoggedIn={isLoggedIn} user={user} />} />
+
+        {/* Dashboard central admin */}
+        <Route
+          path="/admin"
+          element={
+            <AdminDashboard
+              isLoggedIn={isLoggedIn}
+              user={user}
+              authLoaded={authLoaded}
+            />
+          }
+        />
+
+        {/* User management */}
+        <Route
+          path="/admin/users"
+          element={
+            <AdminUsers
+              isLoggedIn={isLoggedIn}
+              user={user}
+              setIsLoggedIn={setIsLoggedIn}
+              setUser={setUser}
+              addToast={addToast}
+              authLoaded={authLoaded}
+            />
+          }
+        />
+        <Route path="/admin/users/:id/edit" element={<UserEdit />} />
+
+        {/* Product management */}
+        <Route
+          path="/admin/products"
+          element={<AdminProducts addToast={addToast} />}
+        />
+
+        <Route path="/products" element={<Products addToast={addToast} />} />
+        <Route
+          path="/products/:id"
+          element={<ProductDetails addToast={addToast} />}
+        />
+        <Route path="/cart" element={<Cart addToast={addToast} />} />
+        <Route path="/checkout" element={<Checkout addToast={addToast} />} />
         <Route path="/not-authorized" element={<NotAuthorized />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
 
-      <ToastList toasts={toasts} removeToast={removeToast} />
+      {/* Toast notificări */}
+      <div className="fixed bottom-4 right-4 space-y-2 z-50">
+        {toasts.map((msg, index) => (
+          <div
+            key={index}
+            className="bg-green-600 text-white px-4 py-2 rounded-lg shadow-md animate-fade-in"
+          >
+            {msg}
+          </div>
+        ))}
+      </div>
     </Router>
   );
 }
