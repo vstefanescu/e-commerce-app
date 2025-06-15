@@ -72,3 +72,24 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
     res.status(500).json({ message: "Failed to update user" });
   }
 };
+
+export const getAdminStats = async (_req: Request, res: Response): Promise<void> => {
+  try {
+    const totalUsers = await prisma.user.count();
+    const totalProducts = await prisma.product.count();
+    const totalOrders = 23; // Poți înlocui cu logica reală
+    const newestProduct = await prisma.product.findFirst({
+      orderBy: { createdAt: "desc" },
+    });
+
+    res.json({
+      totalUsers,
+      totalProducts,
+      totalOrders,
+      popularProductTitle: newestProduct?.title || "N/A",
+    });
+  } catch (error) {
+    console.error("Error fetching admin stats:", error);
+    res.status(500).json({ message: "Failed to fetch admin stats" });
+  }
+};

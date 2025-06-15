@@ -127,9 +127,11 @@ function App() {
               isLoggedIn={isLoggedIn}
               user={user}
               authLoaded={authLoaded}
+              addToast={addToast}
             />
           }
         />
+
         <Route
           path="/admin/users"
           element={
