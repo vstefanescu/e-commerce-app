@@ -1,20 +1,27 @@
-import { Router } from 'express';
-import { 
-  getAllProducts, 
-  createProduct, 
-  deleteProduct, 
-  updateProduct, 
-  getProductById 
-} from '../controllers/productController';
+import { Router } from "express";
+import {
+  getAllProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+} from "../controllers/productController";
 
 const router = Router();
 
-router.get('/', getAllProducts);
+// Obține toate produsele
+router.get("/", getAllProducts);
 
-router.get('/:id', getProductById);
+// Obține un produs după ID
+router.get("/:id", getProductById);
 
-router.post('/', createProduct);
-router.delete('/:id', deleteProduct);
-router.put('/:id', updateProduct);
+// Creează un produs nou
+router.post("/", createProduct);
+
+// Actualizează un produs
+router.put("/:id", updateProduct);
+
+// Șterge un produs
+router.delete("/:id", deleteProduct);
 
 export default router;

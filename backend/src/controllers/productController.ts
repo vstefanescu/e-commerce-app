@@ -1,17 +1,17 @@
-import { Request, Response } from 'express';
-import prisma from '../config/prisma';
+import { Request, Response } from "express";
+import prisma from "../config/prisma";
 
-export const getAllProducts = async (req: Request, res: Response) => {
+// GET TOATE PRODUSELE
+export const getAllProducts = async (req: Request, res: Response): Promise<void> => {
   try {
     const { page, limit, search = "", minPrice, maxPrice } = req.query;
 
-    // Dacă NU există page sau limit => returnează toate produsele (folosit pe Home)
     if (!page && !limit && !search && !minPrice && !maxPrice) {
       const products = await prisma.product.findMany();
-      return res.json(products);
+      res.json(products); // ✅ fără return
+      return;
     }
 
-    // Altfel, aplică paginare + filtre
     const pageNumber = parseInt(page as string) || 1;
     const limitNumber = parseInt(limit as string) || 6;
     const skip = (pageNumber - 1) * limitNumber;
@@ -47,12 +47,34 @@ export const getAllProducts = async (req: Request, res: Response) => {
   }
 };
 
+// GET PRODUS DUPĂ ID
+export const getProductById = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const productId = parseInt(id);
+
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+    });
+
+    if (!product) {
+      res.status(404).json({ error: "Product not found" });
+      return;
+    }
+
+    res.json(product);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch product" });
+  }
+};
+
+// POST CREEAZĂ PRODUS
 export const createProduct = async (req: Request, res: Response): Promise<void> => {
   try {
     const { title, description, price, imageUrl } = req.body;
 
     if (!title || !description || !price || !imageUrl) {
-      res.status(400).json({ error: 'Missing fields' });
+      res.status(400).json({ error: "Missing fields" });
       return;
     }
 
@@ -67,34 +89,11 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
 
     res.status(201).json(newProduct);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to create product' });
+    res.status(500).json({ error: "Failed to create product" });
   }
 };
 
-export const deleteProduct = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { id } = req.params;
-    const productId = parseInt(id);
-
-    const existingProduct = await prisma.product.findUnique({
-      where: { id: productId },
-    });
-
-    if (!existingProduct) {
-      res.status(404).json({ error: 'Product not found' });
-      return;
-    }
-
-    await prisma.product.delete({
-      where: { id: productId },
-    });
-
-    res.json({ message: 'Product deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to delete product' });
-  }
-};
-
+// PUT UPDATE PRODUS
 export const updateProduct = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
@@ -105,14 +104,14 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
     });
 
     if (!existingProduct) {
-      res.status(404).json({ error: 'Product not found' });
+      res.status(404).json({ error: "Product not found" });
       return;
     }
 
     const { title, description, price, imageUrl } = req.body;
 
     if (!title || !description || !price || !imageUrl) {
-      res.status(400).json({ error: 'Missing fields' });
+      res.status(400).json({ error: "Missing fields" });
       return;
     }
 
@@ -128,26 +127,31 @@ export const updateProduct = async (req: Request, res: Response): Promise<void> 
 
     res.json(updatedProduct);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to update product' });
+    res.status(500).json({ error: "Failed to update product" });
   }
 };
 
-export const getProductById = async (req: Request, res: Response) => {
+// DELETE PRODUS
+export const deleteProduct = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const productId = parseInt(id);
 
-    const product = await prisma.product.findUnique({
+    const existingProduct = await prisma.product.findUnique({
       where: { id: productId },
     });
 
-    if (!product) {
-      res.status(404).json({ error: 'Product not found' });
+    if (!existingProduct) {
+      res.status(404).json({ error: "Product not found" });
       return;
     }
 
-    res.json(product);
+    await prisma.product.delete({
+      where: { id: productId },
+    });
+
+    res.json({ message: "Product deleted successfully" });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch product' });
+    res.status(500).json({ error: "Failed to delete product" });
   }
 };

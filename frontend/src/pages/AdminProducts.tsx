@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useDropzone } from "react-dropzone";
 import { api } from "../lib/api";
 
 type Product = {
@@ -22,6 +23,7 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [description, setDescription] = useState("");
   const [addLoading, setAddLoading] = useState(false);
 
@@ -66,8 +68,8 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
       addToast("Prețul trebuie să fie un număr pozitiv.");
       return false;
     }
-    if (!imageUrl.trim().startsWith("http")) {
-      addToast("URL-ul imaginii trebuie să înceapă cu http:// sau https://");
+    if (!imageUrl && !imageFile) {
+      addToast("Trebuie să încarci o imagine.");
       return false;
     }
     if (description.trim().length < 10) {
@@ -89,6 +91,27 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Not authenticated");
+
+      let finalImageUrl = imageUrl.trim();
+
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("file", imageFile);
+
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+
+        if (!uploadRes.ok) throw new Error("Upload failed");
+
+        const uploadData = await uploadRes.json();
+        finalImageUrl = uploadData.imageUrl;
+      }
+
       const priceNumber = parseFloat(price);
       const newProd = await api<Product>(
         "/api/products",
@@ -96,21 +119,24 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
         {
           title: title.trim(),
           price: priceNumber,
-          imageUrl: imageUrl.trim(),
+          imageUrl: finalImageUrl,
           description: description.trim(),
         },
         token
       );
+
       setProducts((prev) => [newProd, ...prev]);
       addToast("Produs adăugat cu succes!");
       setTitle("");
       setPrice("");
       setImageUrl("");
       setDescription("");
+      setImageFile(null);
       setShowAdd(false);
     } catch {
       addToast("Eroare la adăugarea produsului.");
     }
+
     setAddLoading(false);
   };
 
@@ -119,6 +145,7 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
     setTitle(product.title);
     setPrice(product.price.toString());
     setImageUrl(product.imageUrl);
+    setImageFile(null);
     setDescription(product.description);
     setShowAdd(false);
   };
@@ -156,6 +183,7 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
       setPrice("");
       setImageUrl("");
       setDescription("");
+      setImageFile(null);
       addToast("Produs editat cu succes!");
     } catch {
       addToast("Eroare la editarea produsului.");
@@ -169,7 +197,19 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
     setPrice("");
     setImageUrl("");
     setDescription("");
+    setImageFile(null);
   };
+
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: { "image/*": [] },
+    maxFiles: 1,
+    onDrop: (acceptedFiles) => {
+      if (acceptedFiles.length > 0) {
+        setImageFile(acceptedFiles[0]);
+        setImageUrl(URL.createObjectURL(acceptedFiles[0]));
+      }
+    },
+  });
 
   if (loading)
     return <div className="p-8 text-center">Se încarcă produsele...</div>;
@@ -188,6 +228,7 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
             setTitle("");
             setPrice("");
             setImageUrl("");
+            setImageFile(null);
             setDescription("");
           }}
         >
@@ -217,7 +258,13 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
             >
               <input type="text" className="w-full border rounded p-2" value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="Titlu" />
               <input type="number" className="w-full border rounded p-2" value={price} onChange={(e) => setPrice(e.target.value)} required min={0} step="any" placeholder="Preț" />
-              <input type="text" className="w-full border rounded p-2" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} required placeholder="URL imagine" />
+              <div {...getRootProps({ className: "w-full border-2 border-dashed border-gray-300 rounded p-4 text-center cursor-pointer bg-gray-50 hover:bg-gray-100 transition" })}>
+                <input {...getInputProps()} />
+                <p className="text-sm text-gray-600">Trage o imagine aici sau apasă pentru a selecta una</p>
+                {imageUrl && (
+                  <img src={imageUrl} alt="Previzualizare" className="mt-2 mx-auto max-h-40 object-contain rounded" />
+                )}
+              </div>
               <textarea className="w-full border rounded p-2 min-h-[80px]" value={description} onChange={(e) => setDescription(e.target.value)} required placeholder="Descriere" />
               <button type="submit" className="w-full bg-green-700 text-white py-2 rounded font-bold hover:bg-green-800 transition" disabled={addLoading || editLoading}>
                 {editProduct ? (editLoading ? "Se salvează..." : "Salvează modificările") : (addLoading ? "Se adaugă..." : "Adaugă produs")}
@@ -227,7 +274,6 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
         </div>
       )}
 
-      {/* Grid view */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.map((product) => (
           <div key={product.id} className="bg-white border border-gray-200 rounded-xl shadow p-4 flex flex-col">
