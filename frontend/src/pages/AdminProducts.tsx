@@ -99,7 +99,6 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
 
       let finalImageUrl = imageUrl.trim();
 
-      // ✅ Dacă există fișierul real, îl trimitem la backend
       if (imageFile) {
         const formData = new FormData();
         formData.append("file", imageFile);
@@ -117,18 +116,18 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
         const uploadData = await uploadRes.json();
         finalImageUrl = uploadData.imageUrl;
 
-        console.log("✅ finalImageUrl primit de la backend:", finalImageUrl);
+        // 🔥 Suprascriem blob-ul cu URL-ul real din backend
+        setImageUrl(finalImageUrl);
       }
 
       const priceNumber = parseFloat(price);
-
       const newProd = await api<Product>(
         "/api/products",
         "POST",
         {
           title: title.trim(),
           price: priceNumber,
-          imageUrl: finalImageUrl, // 👈 Folosește doar URL-ul real
+          imageUrl: finalImageUrl,
           description: description.trim(),
         },
         token
@@ -137,15 +136,14 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
       setProducts((prev) => [newProd, ...prev]);
       addToast("Produs adăugat cu succes!");
 
-      // 🧼 Reset formular
+      // Resetăm formularul
       setTitle("");
       setPrice("");
       setImageUrl("");
-      setImageFile(null);
       setDescription("");
+      setImageFile(null);
       setShowAdd(false);
-    } catch (err) {
-      console.error("Eroare la handleAddProduct:", err);
+    } catch {
       addToast("Eroare la adăugarea produsului.");
     }
 
