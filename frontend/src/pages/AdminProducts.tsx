@@ -173,6 +173,31 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("Not authenticated");
+
+      let finalImageUrl = imageUrl.trim();
+
+      // 🔁 Dacă s-a selectat un fișier nou, îl urcăm pe server
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("file", imageFile);
+
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+
+        if (!uploadRes.ok) throw new Error("Upload failed");
+
+        const uploadData = await uploadRes.json();
+        finalImageUrl = uploadData.imageUrl;
+
+        // 👇 salvăm URL-ul permanent în state, dacă vrei preview
+        setImageUrl(finalImageUrl);
+      }
+
       const priceNumber = parseFloat(price);
       const updated = await api<Product>(
         `/api/products/${editProduct.id}`,
@@ -180,11 +205,12 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
         {
           title: title.trim(),
           price: priceNumber,
-          imageUrl: imageUrl.trim(),
+          imageUrl: finalImageUrl,
           description: description.trim(),
         },
         token
       );
+
       setProducts((prev) =>
         prev.map((p) => (p.id === updated.id ? updated : p))
       );
@@ -198,6 +224,7 @@ const AdminProducts = ({ addToast }: AdminProductsProps) => {
     } catch {
       addToast("Eroare la editarea produsului.");
     }
+
     setEditLoading(false);
   };
 
