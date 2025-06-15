@@ -1,112 +1,50 @@
-🛍️ Market
-Market is a full-stack e-commerce application built with modern technologies like Node.js, Express, PostgreSQL, Prisma, React, and Tailwind CSS. It includes authentication, admin management tools, product uploads, and a shopping cart experience.
+# 🛍️ Market
 
-🚀 Features
+**Market** is a modern full-stack e-commerce app built with Node.js, React, PostgreSQL, and Tailwind CSS.
 
-🧑‍💼 Authentication
-JWT-based login/register system
+![Market Screenshot](./frontend/public/market-preview.png)
 
-Role-based access (admin & user)
+## 🚀 Features
 
-Profile view for logged-in users
+### 🧑‍💼 Authentication
+- JWT-based login/register
+- Role-based access (`admin`, `user`)
 
-🛒 Products
-Browse paginated & searchable products
+### 🛒 Product Management
+- Browse, search, and filter products
+- Admin: create, edit, delete products (with image upload)
 
-Admin can create, edit, and delete products via modal interface
+### 📊 Admin Dashboard
+- Total users, products, fake orders
+- Highlights newest product
+- User management (edit/delete)
 
-Image upload with drag-and-drop
+### 🛍️ Cart & Checkout
+- Persistent cart with local storage
+- Checkout form and summary
 
-Product images are stored locally (in uploads/)
+## 🧰 Tech Stack
 
-📊 Admin Dashboard
-Overview of total users, products, and orders (mocked)
+| Frontend       | Backend        | Database   | DevOps        |
+|----------------|----------------|------------|---------------|
+| React + TS     | Node.js + Express | PostgreSQL | Docker + Prisma |
+| Tailwind CSS   | JWT Auth       | Prisma ORM | Render + Vercel |
 
-Highlights newest product
+## 🧑‍💻 Local Setup
 
-User management (edit/delete users)
-
-Product management with live feedback
-
-🛍️ Cart & Checkout
-Add and remove products from cart
-
-Cart persists in local storage
-
-Simple checkout screen
-
-🧰 Tech Stack
-Frontend
-React + TypeScript
-
-Tailwind CSS
-
-React Router
-
-Redux Toolkit (optional for future scaling)
-
-Backend
-Node.js + Express
-
-PostgreSQL + Prisma ORM
-
-JWT authentication
-
-File upload with multer
-
-DevOps
-Docker support for backend and database
-
-Frontend deployed on Vercel
-
-Backend deployed on Render
-
-🧑‍💻 Local Development
-1. Clone & install
-bash
-Copy
-Edit
-git clone https://github.com/your-username/market.git
+```bash
+# Clone repo
+git clone https://github.com/YOUR_USERNAME/market.git
 cd market
-2. Backend
-bash
-Copy
-Edit
+
+# Backend
 cd backend
-cp .env.example .env # Fill in your DATABASE_URL
+cp .env.example .env
 docker-compose up -d
-npx prisma generate
 npx prisma migrate dev --name init
 npm run dev
-3. Frontend
-bash
-Copy
-Edit
-cd frontend
+
+# Frontend
+cd ../frontend
 npm install
 npm run dev
-📁 Project Structure
-arduino
-Copy
-Edit
-├── backend/
-│   ├── controllers/
-│   ├── routes/
-│   ├── middlewares/
-│   ├── uploads/ ← image uploads saved here
-│   └── prisma/
-├── frontend/
-│   ├── pages/
-│   ├── components/
-│   └── lib/
-🧪 Future Improvements
-Real orders system with Stripe or PayPal
-
-Product reviews
-
-Pagination in admin panel
-
-Better error handling & validation
-
-📜 License
-This project is open-source and free to use under the MIT License.
