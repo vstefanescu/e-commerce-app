@@ -2,6 +2,9 @@ import { Router, Request, Response } from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import dotenv from "dotenv";
+
+dotenv.config(); // 🟢 Asigură-te că ai acces la .env
 
 const router = Router();
 
@@ -32,8 +35,9 @@ router.post("/upload", upload.single("file"), (req: Request, res: Response): voi
     return;
   }
 
-  const filename = req.file.filename;
-  const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${filename}`;
+  const baseUrl = process.env.BASE_URL?.replace(/\/$/, ""); // 🔒 elimină slash-ul final dacă există
+  const imageUrl = `${baseUrl}/uploads/${req.file.filename}`;
+
   console.log("✅ Upload complet:", imageUrl);
   res.status(200).json({ imageUrl });
 });
