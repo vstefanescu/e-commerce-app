@@ -32,7 +32,9 @@ router.post("/upload", upload.single("file"), (req: Request, res: Response): voi
     return;
   }
 
-  const imageUrl = `/uploads/${req.file.filename}`;
+  const filename = req.file.filename;
+  const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${filename}`;
+  console.log("✅ Upload complet:", imageUrl);
   res.status(200).json({ imageUrl });
 });
 
